@@ -27,5 +27,5 @@ def martin():
           _x += 1 
         _y += 1
         
-    pressure = sense.get_pressure()
-    return pressure
+    compass = sense.get_compass()
+    return compass
