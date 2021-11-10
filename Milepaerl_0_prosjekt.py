@@ -3,6 +3,8 @@ from sense_hat import SenseHat
 from time import sleep
 from math import sin
 from random import choice
+from datetime import datetime
+import csv
 
 # Init
 sense = SenseHat()
@@ -107,7 +109,7 @@ def martin():
 
 def main():
     with open("sensor_values.csv", "w") as csvfile:
-        csvwriter = csv.writer(csvfile)
+        csv_writer = csv.writer(csvfile)
         
         # Main program loop
         while True:
@@ -119,7 +121,8 @@ def main():
             compass = martin()
             
             # Sensor values to be written in sensor_values.csv
-            sensor_values = [humidity, compass]
+            timestamp = datetime.now()
+            sensor_values = [timestamp, humidity, compass]
             
             for value in sensor_values:
                 csv_writer.writerow(sensor_values)
