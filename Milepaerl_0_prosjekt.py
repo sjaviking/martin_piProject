@@ -91,13 +91,15 @@ def martin():
     
     available_colors = [r, g, b, c, m, y]
     
-    while True:
+    i = 0
+    for i in range ( 0, 10):
       for _y in range (0, 8):
         for _x in range (0, 8):
           random_colors = choice(available_colors)
           sense.set_pixel(_x,_y, random_colors)
           _x += 1 
         _y += 1
+        i += 1
         
     compass = sense.get_compass()
     return compass
