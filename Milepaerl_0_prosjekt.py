@@ -221,7 +221,7 @@ def andre():
     b = (0, 255, 0)
     s = (0, 0, 0)
     
-    while True:
+    for i in range(0,3600):
 
         pressure = sense.get_pressure()
         # Define some colours
@@ -329,6 +329,8 @@ def andre():
         ]
         print(pressure)
         sense.set_pixels(display)
+        i += 1
+        sleep(0.10)
 
 def main():
     with open("sensor_values.csv", "w") as csvfile:
