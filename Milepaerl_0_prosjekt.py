@@ -212,7 +212,123 @@ def martin():
         
     compass = sense.get_compass()
     return compass
+  
+def andre():
+    pressure_0 = sense.get_pressure()
+    r = (255, 0, 0)
+    o = (252, 144, 3)
+    g = (0, 255, 0)
+    b = (0, 255, 0)
+    s = (0, 0, 0)
+    
+    while True:
 
+        pressure = sense.get_pressure()
+        # Define some colours
+        
+
+        if pressure < pressure_0 + 0.02:
+            display = [
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, b, b, s, s, s
+        ]
+        elif pressure < pressure_0 + 0.04:
+            display = [
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s
+        ]
+        elif pressure < pressure_0 + 0.06:
+            display = [
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s
+        ]
+        elif pressure < pressure_0 + 0.08:
+            display = [
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s
+        ]
+        elif pressure < pressure_0 + 0.10:
+            display = [
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s
+        ]
+        elif pressure < pressure_0 + 0.12:
+            display = [
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s
+        ]
+        elif pressure < pressure_0 + 0.14:
+            display = [
+            s, s, s, s, s, s, s, s,
+            s, s, s, o, o, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s
+        ]
+        elif pressure < pressure_0 + 0.16:
+            display = [
+            s, s, s, r, r, s, s, s,
+            s, s, s, o, o, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s,
+            s, s, s, b, b, s, s, s
+        ]
+
+        else:
+            display = [
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s,
+            s, s, s, s, s, s, s, s 
+        ]
+        print(pressure)
+        sense.set_pixels(display)
 
 def main():
     with open("sensor_values.csv", "w") as csvfile:
