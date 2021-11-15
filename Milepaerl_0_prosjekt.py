@@ -101,7 +101,7 @@ def martin():
           sense.set_pixel(_x,_y, random_colors)
           _x += 1 
         _y += 1
-        i += 1
+      i += 1
         
     compass = sense.get_compass()
     return compass
