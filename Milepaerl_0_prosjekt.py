@@ -3,6 +3,11 @@ from sense_hat import SenseHat
 from math import sin
 from random import choice
 from datetime import datetime
+from PIL import Image
+import numpy as np
+import glob
+import os
+import math
 import time
 import csv
 
@@ -290,21 +295,22 @@ def kristian():
 
   
 def knut_ola():
-    COLUMNS = COLS
     global sense
     global ROWS
     global COLUMNS
+    
+    COLUMNS = COLS
 
     ######## Config ########
     # Uncomment if pixel rotation is oposite from physical rotation
-    #invert_rotation = 1
-    invert_rotation = -1
+    invert_rotation = 1
+    #invert_rotation = -1
 
     ######## Config ########
     # Uncomment the correct axis
     #AXIS = "pitch"
-    #AXIS = "yaw"
-    AXIS = "roll"
+    AXIS = "yaw"
+    #AXIS = "roll"
 
     COLOR = (255, 0, 0)
     BLACK = (0, 0, 0)
@@ -481,12 +487,43 @@ def gunnar():
         time.sleep(0.3)
     return humidity
 
+  
+def rickroll(number_of_frames=5300, rel_path="../Pictures/rickroll"):
+    """Reads all .png images in path and prints
+       them to the SenseHat led array. Provided
+       images should be 8x8 pixels and be uniformly
+       named with an incrementing number."""
 
+    FRAME_DELAY = 1 / 25
+
+    # Declare path to images
+    script_dir = os.path.dirname(__file__)
+    img_dir = os.path.join(script_dir, rel_path)
+
+    # Make list of all .png filenames in the provided path
+    filepaths = []
+    for filepath in glob.glob(os.path.join(img_dir, "*.png")):
+        filepaths.append(filepath)
+
+    # Sort filepaths by the numeric value, e.g. "img/sometext0001.png" --> 1
+    filepaths.sort(key=lambda s: int("".join([c for c in s if c.isdigit()])))
+    
+    # Print images to the led array
+    for frame_num, frame in enumerate(filepaths):
+        if frame_num > number_of_frames:
+            break
+        with Image.open(frame) as imgfile:
+            img_array = np.asarray(imgfile)
+            flat_image_array = [element for sublist in img_array for element in sublist]
+            sense.set_pixels(flat_image_array)
+            sleep(FRAME_DELAY)
+            
+            
 def martin():
     available_colors = [RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW]
     
     i = 0
-    for i in range (0, 1000):
+    for i in range (0, 70):
         for _y in range (0, 8):
             for _x in range (0, 8):
                 random_colors = choice(available_colors)
@@ -631,6 +668,7 @@ def main():
             knut_ola()
             gyro = kristian()
             compass = martin()
+            rickroll(number_of_frames=150)
             
             # Sensor values to be written in sensor_values.csv
             timestamp = datetime.now()
