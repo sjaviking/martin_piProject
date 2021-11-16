@@ -409,7 +409,7 @@ def knut_ola():
 
     # Main Loop
     angle = 0
-    run_time = 1000
+    run_time = 100
     for run_iteration in range(run_time):
         new_angle = get_angle()
         if angle != new_angle:
@@ -516,7 +516,7 @@ def rickroll(number_of_frames=5300, rel_path="../Pictures/rickroll"):
             img_array = np.asarray(imgfile)
             flat_image_array = [element for sublist in img_array for element in sublist]
             sense.set_pixels(flat_image_array)
-            sleep(FRAME_DELAY)
+            time.sleep(FRAME_DELAY)
             
             
 def martin():
@@ -544,7 +544,7 @@ def andre():
     b = BLUE
     s = BLACK
     
-    for i in range(0,3600):
+    for i in range(0,70):
         pressure = sense.get_pressure()
         # Define some colours
         
