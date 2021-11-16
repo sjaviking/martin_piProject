@@ -80,7 +80,7 @@ def aleksander():
             myImage[x] = p
           
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for c in range(35,37):
             myImage[c] = b    
       
@@ -91,12 +91,12 @@ def aleksander():
             myImage[x] = p
           
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for c in range(35,37):
             myImage[c] = b
           
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for v in range(27,29):
             myImage[v] = y
           
@@ -107,17 +107,17 @@ def aleksander():
             myImage[x] = p
           
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for c in range(35,37):
             myImage[c] = b
           
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for v in range(27,29):
             myImage[v] = y
           
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for i in range(19,21):
             myImage[i] = o
           
@@ -128,22 +128,22 @@ def aleksander():
             myImage[x] = p
           
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for c in range(35,37):
             myImage[c] = b
           
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for v in range(27,29):
             myImage[v] = y
           
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for i in range(19,21):
             myImage[i] = o
         
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for n in range(11,13):
             myImage[n] = r
           
@@ -154,27 +154,27 @@ def aleksander():
             myImage[x] = p
           
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for c in range(35,37):
             myImage[c] = b
           
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for v in range(27,29):
             myImage[v] = y
           
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for i in range(19,21):
             myImage[i] = o
         
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for n in range(11,13):
             myImage[n] = r
         
         sense.set_pixels(myImage)
-        sleep(1)
+        time.sleep(1)
         for n in range(2,6):
             myImage[n] = r
             myImage[9] = r
@@ -183,7 +183,7 @@ def aleksander():
             myImage[22] = r
           
     sense.set_pixels(myImage)
-    sleep(3)
+    time.sleep(3)
 
 
 def kristian():
@@ -199,7 +199,7 @@ def kristian():
         #fyller rader med valgt farge og antall rader
         while i < 8*x:
             array[i] = color
-        i += 1
+            i += 1
         sense.set_pixels(array)
 
       
@@ -233,10 +233,10 @@ def kristian():
     var = 360 #hvilket utgangspunkt du vil ha
     konstant_deg = 5
     #velg hvor lenge while løkka skal kjøre:
-    tid = 5
+    tid = 8
   
     #teller 60 sekunder x antall ganger
-    t_end = time.time() + 60*tid
+    t_end = time.time() + tid
     i = 0 #brukes for å printe compass mindre
     while time.time() < t_end:
         IMUValues = getIMUValues()
@@ -403,14 +403,15 @@ def knut_ola():
 
     # Main Loop
     angle = 0
-    while True:
-        sleep(0.1)
+    run_time = 1000
+    for run_iteration in range(run_time):
         new_angle = get_angle()
         if angle != new_angle:
             angle = new_angle
             sense_buffer.clear()
             draw_horizon(invert_rotation * (angle - offset))
             sense_buffer.draw()
+        time.sleep(0.1)
 
 
 def gunnar():
@@ -485,7 +486,7 @@ def martin():
     available_colors = [RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW]
     
     i = 0
-    for i in range ( 0, 10):
+    for i in range (0, 1000):
         for _y in range (0, 8):
             for _x in range (0, 8):
                 random_colors = choice(available_colors)
@@ -493,6 +494,7 @@ def martin():
                 _x += 1 
             _y += 1
         i += 1
+        time.sleep(0.1)
     compass = sense.get_compass()
     return compass
 
