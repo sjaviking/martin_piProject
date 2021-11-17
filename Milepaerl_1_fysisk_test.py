@@ -59,15 +59,25 @@ while True:
     event = senseHat.stick.wait_for_event()
 
     if event.direction == "left":
-        while stick_down() != 1:
+        start = time()
+        
+        write_to_log('\n\n### New measurements started at: ' + datatime.now().strftime('%d%m%Y %H:%M:%S' + ' ###\n'))
+
+        while stick_down() !=1:
             p = calc_pressure_Pa()
             h = (T_1/a) * ( (p/p_1)**(-a*R/g_0) - 1) + h_1
-            senseHat.show_message(str(round(h,2) )+ "m" ,0.07)
+            
+            now = time() - start
+            
+            write_to_log(str(now) + ',' + str(p) + ',' + str(h) + ',' + str(senseHat.temp))
+
+            senseHat.show_message(str(round(h,2)) + 'm', 0.03)
+
     if event.direction == "right":
-        while stick_down() !=1:
+        while stick down()) !=1:
             T_1 = senseHat.temp + 273.15
             p_1 = calc_pressure_Pa()
-            senseHat.show_message(str(int (p_1))+" Pa "+str(T_1)+" K", 0.07)
+            senseHat.show_message(str(int (p_1))+" Pa "+str(eound(T_1))+" K", 0.03)
 
 
 # Ny kodefil
