@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 16 08:36:51 2021
-
-@author: Martin
-"""
-
 from sense_hat import SenseHat
 from time import sleep, time
 from datetime import datetime
@@ -42,6 +35,10 @@ def stick_down():
             return 1
 
 def main():
+    global T_1
+    global p_1
+    global h_1
+
     with open("heigth_values.csv", "w") as csvfile:
         csv_writer = csv.writer(csvfile)
 
@@ -53,7 +50,8 @@ def main():
             if event.direction == "left":
                 start = time()
                 
-                write_to_log('\n\n### New measurements started at: ' + datetime.now().strftime('%d%m%Y %H:%M:%S' + ' ###\n'))
+                header = '\n\n### New measurements started at: ' + datetime.now().strftime('%d%m%Y %H:%M:%S' + ' ###\n')
+                print(header)
 
                 while stick_down() !=1:
                     p = calc_pressure_Pa()
@@ -63,6 +61,7 @@ def main():
                     
                     print(str(now) + ',' + str(p) + ',' + str(h) + ',' + str(senseHat.temp))
 
+                    # Skriv verdier til height_values.csv
                     sensor_values = [now, p, h, senseHat.temp]
                     for value in sensor_values:
                         csv_writer.writerow(sensor_values)
