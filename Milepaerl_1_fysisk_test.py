@@ -26,9 +26,6 @@ T_1 = 16 + 273.25
 p_1 = 100000 #trykket målt ved høyden h_1
 h_1 = 0 # vi gjør målingene relative dersom vi ønsker ved å sette h_1  = 0
 
-def write_to_log(write_data):
-    with open(path, 'a') as f:
-        f.write(str(write_data) + '\n')
 
 def calc_pressure_Pa():
     p = a
@@ -64,7 +61,7 @@ def main():
                     
                     now = time() - start
                     
-                    write_to_log(str(now) + ',' + str(p) + ',' + str(h) + ',' + str(senseHat.temp))
+                    print(str(now) + ',' + str(p) + ',' + str(h) + ',' + str(senseHat.temp))
 
                     sensor_values = [now, p, h, senseHat.temp]
                     for value in sensor_values:
