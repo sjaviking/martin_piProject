@@ -43,7 +43,7 @@ while True:
     if event.direction == "left":
         while stick_down() != 1:
             p = calc_pressure_Pa()
-            h = (T 1/a) * ( (p/p_1)**(-a*R/g_0) - 1) + h_1
+            h = (T_1/a) * ( (p/p_1)**(-a*R/g_0) - 1) + h_1
             senseHat.show_message(str(round(h,2) )+ "m" ,0.07)
     if event.direction == "right":
         while stick down()) !=1:
