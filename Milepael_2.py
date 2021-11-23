@@ -73,14 +73,14 @@ def intro_graphic():
 
 
 def game_over_graphic(score):
-    points = str(123) # midlertidig poengsum, for at proragm skal kjøre
+    score = str(123) # midlertidig poengsum, for at proragm skal kjøre
  
     sense.low_light = True   # Lav lysintensitet
 
-    sense.show_message("Game Over!", text_colour=[255, 0, 0], back_colour=[50, 166, 168])
+    sense.show_message("Game Over! Score:", scroll_speed=0.06, text_colour=[255, 0, 0], back_colour=[50, 166, 168])
 
-    for p in range(0, len(points)):   # Prointer hvert siffer i poengsum
-        sense.show_letter(points[p], back_colour=[194, 27, 209])
+    for p in range(0, len(str(score))):   # Printer hvert siffer i poengsum
+        sense.show_letter(score[p], back_colour=[194, 27, 209])
         time.sleep(0.5)
         sense.clear(194, 27, 209)  # Clearer ut forgie siffer
         time.sleep(0.5)
