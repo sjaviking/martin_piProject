@@ -203,3 +203,133 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+from sense_hat import SenseHat
+sense = SenseHat()
+from time import sleep
+pixel_list = sense.get_pixels()
+
+W = (255, 255, 255)
+B = (0, 0, 0)
+r = (255, 0, 0)
+sense.set_rotation(270)
+level1 = False
+level2 = False
+level3 = True
+
+speedometer_1 = [
+        B, B, W, W, W, W, B, B,
+        B, W, B, B, B, B, W, B,
+        W, B, B, B, B, B, B, W,
+        W, B, B, B, B, B, B, W,
+        W, B, B, B, B, B, B, W,
+        W, B, B, B, r, B, B, W,
+        B, W, B, r, B, B, W, r,
+        B, B, W, B, B, W, r, r,
+        ]
+speedometer_2 = [
+        B, B, W, W, W, W, B, B,
+        B, W, B, B, B, B, W, B,
+        W, B, B, B, B, B, B, W,
+        W, B, B, B, B, B, B, W,
+        W, B, B, B, B, B, B, W,
+        W, r, r, r, r, B, B, W,
+        B, W, B, B, B, B, W, r,
+        B, B, W, B, B, W, r, r,
+        ]
+speedometer_3 = [
+        B, B, W, W, W, W, B, B,
+        B, W, B, B, B, B, W, B,
+        W, r, B, B, B, B, B, W,
+        W, B, r, B, B, B, B, W,
+        W, B, B, r, B, B, B, W,
+        W, B, B, B, r, B, B, W,
+        B, W, B, B, B, B, W, r,
+        B, B, W, B, B, W, r, r,
+        ]
+speedometer_4 = [
+        B, B, W, W, W, W, B, B,
+        B, W, B, B, r, B, W, B,
+        W, B, B, B, r, B, B, W,
+        W, B, B, B, r, B, B, W,
+        W, B, B, B, r, B, B, W,
+        W, B, B, B, r, B, B, W,
+        B, W, B, B, B, B, W, r,
+        B, B, W, B, B, W, r, r,
+        ]
+        
+speedometer_5 = [
+        B, B, W, W, W, W, B, B,
+        B, W, B, B, B, B, W, B,
+        W, B, B, B, B, B, r, W,
+        W, B, B, B, B, r, B, W,
+        W, B, B, B, r, B, B, W,
+        W, B, B, r, B, B, B, W,
+        B, W, B, B, B, B, W, r,
+        B, B, W, B, B, W, r, r,
+        ]
+speedometer_6 = [
+        B, B, W, W, W, W, B, B,
+        B, W, B, B, B, B, W, B,
+        W, B, B, B, B, B, B, W,
+        W, B, B, B, B, B, B, W,
+        W, B, B, B, B, B, B, W,
+        W, B, B, r, r, r, r, W,
+        B, W, B, B, B, B, W, r,
+        B, B, W, B, B, W, r, r,
+        ]
+speedometer_7 = [
+        B, B, W, W, W, W, B, B,
+        B, W, B, B, B, B, W, B,
+        W, B, B, B, B, B, B, W,
+        W, B, B, B, B, B, B, W,
+        W, B, B, B, B, B, B, W,
+        W, B, B, r, B, B, B, W,
+        B, W, B, B, r, B, W, r,
+        B, B, W, B, B, W, r, r,
+        ]
+def nextLevel():
+  if level1:
+    speed = 0.04
+    sense.show_message("Lvl 1", speed, text_colour=W, back_colour=B)
+    sense.set_pixels(speedometer_1)
+    sleep(0.4)
+    sense.set_pixels(speedometer_2)
+    sleep(0.4)
+    sense.set_pixels(speedometer_3)
+    sleep(1)
+    
+  if level2:
+    speed = 0.04
+    sense.show_message("Lvl 2", speed, text_colour=W, back_colour=B)
+    sense.set_pixels(speedometer_1)
+    sleep(0.4)
+    sense.set_pixels(speedometer_2)
+    sleep(0.4)
+    sense.set_pixels(speedometer_3)
+    sleep(0.4)
+    sense.set_pixels(speedometer_4)
+    sleep(0.4)
+    sense.set_pixels(speedometer_5)
+    sleep(1)
+  
+  if level3:
+    speed = 0.04
+    sense.show_message("Lvl 3", speed, text_colour=W, back_colour=B)
+    sense.set_pixels(speedometer_1)
+    sleep(0.4)
+    sense.set_pixels(speedometer_2)
+    sleep(0.4)
+    sense.set_pixels(speedometer_3)
+    sleep(0.4)
+    sense.set_pixels(speedometer_4)
+    sleep(0.4)
+    sense.set_pixels(speedometer_5)
+    sleep(0.4)
+    sense.set_pixels(speedometer_6)
+    sleep(0.4)
+    sense.set_pixels(speedometer_7)
+    sleep(1)
+    
+
+nextLevel()
