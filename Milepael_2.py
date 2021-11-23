@@ -1,8 +1,31 @@
 from random import randint
 from sense_hat import SenseHat
 import time
+import os
 
-sense = SenseHat()
+# Om du kjører koden lokalt kan du sette DEBUG til True.
+# -- printer til terminal i stedet for RPi sensehat
+DEBUG = True
+
+if not DEBUG:
+    from sense_hat import SenseHat
+    sense = SenseHat()
+
+ROWS = 8
+COLS = 8
+
+FPS = 5
+FRAME_DURATION = 1 / FPS
+
+GATE_FREQUENCY = 8
+FUEL_FREQUENCY = 23
+GATE_WIDTH = 2
+CAR_Y_POS = 6
+GAME_LENGTH = 200
+CAR_COLOR = (255, 255, 255)
+GATE_COLOR = (255, 0, 0)
+NOCOLOR = (0, 0, 0)
+
 
 
 def get_gate_pos():
@@ -46,7 +69,7 @@ def get_imu_values():
     """Få xyz-verdi"""
     _gyro = sense.get_gyroscope()
     pitch = _gyro["pitch"]
-    return pitch
+    return round(pitch)
 
 
 def calculate_car_position(imu_values):
@@ -69,12 +92,20 @@ def calculate_car_position(imu_values):
         return int(0)
     else:
         pass
-        
 
 
 def debug_print(buffer):
+    os.system("clear")
     for line in buffer:
-        print(line)
+        for char in line:
+            if char == NOCOLOR:
+                print("..", end="")
+            if char == CAR_COLOR:
+                print("XX", end="")
+            if char == GATE_COLOR:
+                print("OO", end="")
+        print()
+    print()
 
 
 def main():
@@ -110,8 +141,14 @@ def main():
             gate_x_pos = get_gate_pos()
             gate_y_start = iterator
 
-        #TODO: Legg gaten til i printebuffer
-        # x = gate_x_pos
+
+        #TODO: legg til fuel-tønner som dukker opp etter FUEL_FREQUENCY
+        # antall iterasjoner. Når du treffer fuel fyller du opp baren
+        # på høyre side av skjermen. Går du tom for fuel er spillet over.
+
+        #Legg gaten til i printebuffer
+        print(gate_x_pos)
+
         gate_y_pos = abs(iterator - gate_y_start)
 
         #Inkrementer iterator
@@ -120,7 +157,27 @@ def main():
         #Når bilen passerer en gate, sjekk om du traff
         if CAR_Y_POS == gate_y_pos:
             if gate_x_pos <= car_x_pos <= gate_x_pos + GATE_WIDTH:
-                score += 1
+                if car_x_pos == gate_x_pos + GATE_WIDTH // 2:
+                    score += 3
+                    print("Score + 3")
+                else:
+                    score += 1
+                    print("Score + 1")
+
+
+        #Inkrementer iterator
+        iterator += 1
+
+        #Print banen
+        if DEBUG:
+            debug_print(buffer)
+        else:
+            #Får alt over på éi liste i stedet for ei liste av lister
+            flat_buffer = [element for sublist in buffer for element in sublist]
+
+            #Printer til sensehat-skjermen
+            sense.set_pixels(buffer)
+
 
         #Når det har gått GAME_LENGTH antall iterasjoner, stopp spillet
         if iterator >= GAME_LENGTH:
