@@ -43,7 +43,15 @@ def increment_buffer(buffer):
 
 
 def intro_graphic():
-    """Tegn noe kult"""
+    sense.low_light = True
+
+    sense.show_message('Welcome to', text_colour=[0,0,0], back_colour=[194, 27, 209])
+    sense.low_ligh = False
+    sense.show_message('THE GAME', text_colour=[0,0,0], back_colour=[194, 27, 209])
+    sense.low_light = True
+    sense.show_message('Pitch the PI to control', text_colour=[0,0,0], back_colour=[194, 27, 209])
+
+    sense.clear()
     pass
 
 
