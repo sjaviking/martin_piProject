@@ -1,9 +1,14 @@
 import random
 import time
 import os
-#from sense_hat import SenseHat
 
-#sense = SenseHat()
+# Om du kjører koden lokalt kan du sette DEBUG til True.
+# -- printer til terminal i stedet for RPi sensehat
+DEBUG = True
+
+if not DEBUG:
+    from sense_hat import SenseHat
+    sense = SenseHat()
 
 ROWS = 8
 COLS = 8
@@ -111,7 +116,14 @@ def main():
         iterator += 1
 
         #Print banen
-        debug_print(buffer)
+        if DEBUG:
+            debug_print(buffer)
+        else:
+            #Får alt over på éi liste i stedet for ei liste av lister
+            flat_buffer = [element for sublist in buffer for element in sublist]
+
+            #Printer til sensehat-skjermen
+            sense.set_pixels(buffer)
 
         #Når det har gått GAME_LENGTH antall iterasjoner, stopp spillet
         if iterator >= GAME_LENGTH:
