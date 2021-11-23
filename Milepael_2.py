@@ -44,13 +44,18 @@ def increment_buffer(buffer):
 
 def intro_graphic():
     sense.low_light = True
+    TheGame = 'THE GAME'
+    sense.show_message('Welcome to', scroll_speed=0.06, text_colour=[0,0,0], back_colour=[194, 27, 209])
 
-    sense.show_message('Welcome to', text_colour=[0,0,0], back_colour=[194, 27, 209])
     sense.low_ligh = False
-    sense.show_message('THE GAME', text_colour=[0,0,0], back_colour=[194, 27, 209])
+    for q in range(0, len(TheGame)-1, 2):
+      sense.show_letter(TheGame[q], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
+      time.sleep(0.5)
+      sense.show_letter(TheGame[q+1], text_colour=[0,0,0], back_colour=[255, 255, 255])
+      time.sleep(0.5)
     sense.low_light = True
-    sense.show_message('Pitch the PI to control', text_colour=[0,0,0], back_colour=[194, 27, 209])
 
+    sense.show_message('Pitch to control', text_colour=[0,0,0], back_colour=[194, 27, 209])
     sense.clear()
     pass
 
