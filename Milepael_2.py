@@ -40,7 +40,20 @@ def intro_graphic():
 
 
 def game_over_graphic(score):
-    """Vis score"""
+    points = str(123)    # Midlertidig poengsum, slik at programmet i det hele tatt kjører
+
+    sense.low_light = True    # Lav lysstyrke
+
+    sense.show_message("Game Over!", text_colour=[255, 0, 0], back_colour=[50, 166, 168])
+
+    for p in range(0, len(points)):   # For løkke i tilfelle flere siffer en et
+      sense.show_letter(points[p], back_colour=[194, 27, 209])
+      time.sleep(0.5)
+      sense.clear(194, 27, 209)
+      time.sleep(0.5)
+
+    sense.show_message("Points", back_colour=[194, 27, 209])   # Skriver poeng til slutt
+    sense.clear()  # fjerner innhold fra LED-matrise etter kjørt funksjon
     pass
 
 
