@@ -42,7 +42,15 @@ def increment_buffer(buffer):
 
 
 def intro_graphic():
-    """Tegn noe kult"""
+    sense.low_light = True
+
+    sense.show_message('Welcome to', text_colour=[0,0,0], back_colour=[194, 27, 209])
+    sense.low_ligh = False
+    sense.show_message('THE GAME', text_colour=[0,0,0], back_colour=[194, 27, 209])
+    sense.low_light = True
+    sense.show_message('Pitch the PI to control', text_colour=[0,0,0], back_colour=[194, 27, 209])
+
+    sense.clear()
     pass
 
 
@@ -72,24 +80,9 @@ def get_imu_values():
 
 def calculate_car_position(imu_values):
     """Returner x-posisjon for bilen"""
-    if pitch in range(0, 5):
-        return int(4)
-    elif pitch in range(5, 10):
-        return int(5)
-    elif pitch in range(10, 15):
-        return int(6)
-    elif pitch in range(15, 20):
-        return int(7)
-    elif pitch in range(0, -5):
-        return int(3)
-    elif pitch in range(-5, -10):
-        return int(2)
-    elif pitch in range(-5, -10):
-        return int(1)
-    elif pitch in range(-10, -15):
-        return int(0)
-    else:
-        pass
+    for number in range(-20, 20, 5):
+        if imu_values in range(number, number+5):
+            return imu_values/2.5
 
 
 def debug_print(buffer):
