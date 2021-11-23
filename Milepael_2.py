@@ -36,9 +36,12 @@ NOCOLOR = (0, 0, 0)
 def restrict_value(value, min_value, max_value):
     return max(min_value, min(max_value, value))
     
-def move_car(change):
+def move_car_to(pos):
     global car_x_pos
-    car_x_pos = restrict_value(car_x_pos + change, 0, COLS - 1)
+    car_x_pos = pos
+    
+def move_car(change):
+    move_car_to(restrict_value(car_x_pos + change, 0, COLS - 1))
 
 def get_gate_pos():
     """Returner x-posisjon til gate som du skal treffe med bilen"""
@@ -218,21 +221,27 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
+@socketio.on('move_to')
+def on_socket_move_to(json):
+    # Json is in this case an int sent by the ws client
+    move_car_to(json)
+    print(car_x_pos)
+
 @socketio.on('move_left')
-def on_socket_move_left():
+def on_socket_move_left(json):
     move_car(-1)
 
 @socketio.on('move_right')
-def on_socket_move_right():
+def on_socket_move_right(json):
     move_car(1)
 
 @socketio.on('stop_moving_left')
-def on_socket_stop_move_left():
+def on_socket_stop_move_left(json):
     # TODO: Implement holding button down to move car
     pass
 
 @socketio.on('stop_moving_right')
-def on_socket_stop_move_right():
+def on_socket_stop_move_right(json):
     # TODO: Implement holding button down to move car
     pass
 
