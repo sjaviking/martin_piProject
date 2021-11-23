@@ -2,6 +2,13 @@ import random
 import time
 import os
 
+from flask import Flask
+from sense_hat import SenseHat
+from flask_cors import CORS
+from flask_socketio import SocketIO
+import threading
+from logging.config import dictConfig
+
 # Om du kjører koden lokalt kan du sette DEBUG til True.
 # -- printer til terminal i stedet for RPi sensehat
 DEBUG = True
@@ -12,6 +19,7 @@ if not DEBUG:
 
 ROWS = 8
 COLS = 8
+car_x_pos = 3
 
 FPS = 5
 FRAME_DURATION = 1 / FPS
@@ -25,7 +33,12 @@ CAR_COLOR = (255, 255, 255)
 GATE_COLOR = (255, 0, 0)
 NOCOLOR = (0, 0, 0)
 
-
+def restrict_value(value, min_value, max_value):
+    return max(min_value, min(max_value, value))
+    
+def move_car(change):
+    global car_x_pos
+    car_x_pos = restrict_value(car_x_pos + change, 0, COLS - 1)
 
 def get_gate_pos():
     """Returner x-posisjon til gate som du skal treffe med bilen"""
@@ -200,6 +213,56 @@ def main():
         #Delay
         time.sleep(FRAME_DURATION)
 
+app = Flask(__name__, static_url_path='/site', static_folder='web')
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+@socketio.on('move_left')
+def on_socket_move_left():
+    move_car(-1)
+
+@socketio.on('move_right')
+def on_socket_move_right():
+    move_car(1)
+
+@socketio.on('stop_moving_left')
+def on_socket_stop_move_left():
+    # TODO: Implement holding button down to move car
+    pass
+
+@socketio.on('stop_moving_right')
+def on_socket_stop_move_right():
+    # TODO: Implement holding button down to move car
+    pass
+
+def configure_flask_logger():
+    """Makes the logs less verbose"""
+    dictConfig({
+        'version': 1,
+        'formatters': {'default': {
+            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+        }},
+        'handlers': {'wsgi': {
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://flask.logging.wsgi_errors_stream',
+            'formatter': 'default'
+        }},
+        'root': {
+            'level': 'ERROR',
+            'handlers': ['wsgi']
+        }
+    })
+
+def host_websocket():
+    """
+        Multiplayer is hosted on
+        http://pearpie.is-very-sweet.org:5001/site/index.html
+    """
+    configure_flask_logger()
+    app.run(host="0.0.0.0", port=5001)
+    socketio.run(app)
 
 if __name__ == "__main__":
+    threading.Thread(target=host_websocket).start()
     main()
