@@ -13,10 +13,11 @@ if not DEBUG:
 ROWS = 8
 COLS = 8
 
-FPS = 25
+FPS = 5
 FRAME_DURATION = 1 / FPS
 
 GATE_FREQUENCY = 8
+FUEL_FREQUENCY = 23
 GATE_WIDTH = 2
 CAR_Y_POS = 6
 GAME_LENGTH = 200
@@ -61,7 +62,7 @@ def calculate_car_position(imu_values):
 
 
 def debug_print(buffer):
-    os.system("clear")
+    #os.system("clear")
     for line in buffer:
         for char in line:
             if char == NOCOLOR:
@@ -101,6 +102,10 @@ def main():
             gate_y_start = iterator
             print("Made gate")
 
+        #TODO: legg til fuel-tønner som dukker opp etter FUEL_FREQUENCY
+        # antall iterasjoner. Når du treffer fuel fyller du opp baren
+        # på høyre side av skjermen. Går du tom for fuel er spillet over.
+
         #Legg gaten til i printebuffer
         print(gate_x_pos)
         gate_y_pos = abs(iterator - gate_y_start)
@@ -110,7 +115,12 @@ def main():
         #Når bilen passerer en gate, sjekk om du traff
         if CAR_Y_POS == gate_y_pos:
             if gate_x_pos <= car_x_pos <= gate_x_pos + GATE_WIDTH:
-                score += 1
+                if car_x_pos == gate_x_pos + GATE_WIDTH // 2:
+                    score += 3
+                    print("Score + 3")
+                else:
+                    score += 1
+                    print("Score + 1")
 
         #Inkrementer iterator
         iterator += 1
