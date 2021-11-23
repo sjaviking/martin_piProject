@@ -1,5 +1,4 @@
-from random import randint
-from sense_hat import SenseHat
+import random
 import time
 import os
 
@@ -33,8 +32,8 @@ def get_gate_pos():
     #Gjør så det er større sannsynlighet for å treffe porter i midten
     skew = lambda x: - (1/16) * (x - 4)**2 + 1
 
-    port_pos = skew(random.randint(0, 99) / 100) 
-    pass
+    gate_pos = int(skew(random.randint(0, 99) / 100) * 8)
+    return gate_pos
 
 
 def increment_buffer(buffer):
@@ -55,14 +54,13 @@ def game_over_graphic(score):
     sense.show_message("Game Over!", text_colour=[255, 0, 0], back_colour=[50, 166, 168])
 
     for p in range(0, len(points)):   # Prointer hvert siffer i poengsum
-      sense.show_letter(points[p], back_colour=[194, 27, 209])
-      time.sleep(0.5)
-      sense.clear(194, 27, 209)  # Clearer ut forgie siffer
-      time.sleep(0.5)
+        sense.show_letter(points[p], back_colour=[194, 27, 209])
+        time.sleep(0.5)
+        sense.clear(194, 27, 209)  # Clearer ut forgie siffer
+        time.sleep(0.5)
 
     sense.show_message("Points", back_colour=[194, 27, 209])   # Printer points til slutt
     sense.clear()  # Clearer matrise
-    pass
 
 
 def get_imu_values():
@@ -74,7 +72,7 @@ def get_imu_values():
 
 def calculate_car_position(imu_values):
     """Returner x-posisjon for bilen"""
-    if pitch in range(0, 5);
+    if pitch in range(0, 5):
         return int(4)
     elif pitch in range(5, 10):
         return int(5)
@@ -127,15 +125,28 @@ def main():
 
     #Spillet starter
     while running:
+        #Lager ny buffer (som til slutt skal printes til skjermen)
+        buffer = [[NOCOLOR for x in range(COLS)] for y in range(ROWS)]
+
+
         #Finn nye gyro-verdier for xyz
-        imu_values = get_imu_values()
+        if not DEBUG:
+            imu_values = get_imu_values()
+
 
         #Finn ut hvor bilen skal stå
-        car_x_pos = calculate_car_position(imu_values)
+        if not DEBUG:
+            car_x_pos = calculate_car_position(imu_values)
+        else:
+            #TODO: legg inn keyboard-kontroller her så du kan 
+            # styre med piltastene på pc
+            car_x_pos = 3
 
-        #TODO: Legg bilen til i printebuffer
+
+        #Legg bilen til i printebuffer
         buffer[CAR_Y_POS][car_x_pos] = CAR_COLOR
         
+
         #Etter "GATE_FREQUENCY" iterasjoner, lag en ny gate
         if iterator % GATE_FREQUENCY == 0:
             gate_x_pos = get_gate_pos()
@@ -146,13 +157,13 @@ def main():
         # antall iterasjoner. Når du treffer fuel fyller du opp baren
         # på høyre side av skjermen. Går du tom for fuel er spillet over.
 
+
         #Legg gaten til i printebuffer
-        print(gate_x_pos)
-
         gate_y_pos = abs(iterator - gate_y_start)
+        buffer[gate_y_pos][gate_x_pos] = GATE_COLOR                 #Venstre påle
+        buffer[gate_y_pos][gate_x_pos + GATE_WIDTH] = GATE_COLOR    #Høyre påle
 
-        #Inkrementer iterator
-        iterator += 1
+
 
         #Når bilen passerer en gate, sjekk om du traff
         if CAR_Y_POS == gate_y_pos:
@@ -168,6 +179,7 @@ def main():
         #Inkrementer iterator
         iterator += 1
 
+
         #Print banen
         if DEBUG:
             debug_print(buffer)
@@ -181,8 +193,14 @@ def main():
 
         #Når det har gått GAME_LENGTH antall iterasjoner, stopp spillet
         if iterator >= GAME_LENGTH:
+            if DEBUG:
+                break
             game_over_graphics(score)
             running = False
+        
+
+        #Delay
+        time.sleep(FRAME_DURATION)
 
 
 if __name__ == "__main__":
