@@ -14,7 +14,6 @@ if not DEBUG:
 
 ROWS = 8
 COLS = 8
-car_x_pos = 3
 
 FPS = 5
 FRAME_DURATION = 1 / FPS
@@ -29,28 +28,28 @@ GATE_COLOR = (255, 0, 0)
 NOCOLOR = (0, 0, 0)
 MUSIC_FILE = "soundtrack_mgp.wav"
 
+
 def restrict_value(value, min_value, max_value):
     return max(min_value, min(max_value, value))
+
     
 def move_car_to(pos):
     global car_x_pos
     car_x_pos = pos
+
     
 def move_car(change):
     move_car_to(restrict_value(car_x_pos + change, 0, COLS - 1))
 
+
 def get_gate_pos():
     """Returner x-posisjon til gate som du skal treffe med bilen"""
-    #Gjør så det er større sannsynlighet for å treffe porter i midten
-    skew = lambda x: - (1/16) * (x - 4)**2 + 1
+    #Bredden til banen er COLS minus bredden til fuel-baren
+    game_width = COLS - 2
+    right_pole_max = game_width - GATE_WIDTH
 
-    gate_pos = int(skew(random.randint(0, 99) / 100) * 8)
+    gate_pos = random.randint(0, right_pole_max)
     return gate_pos
-
-
-def increment_buffer(buffer):
-    """Flytt banen en piksel nedover"""
-    pass
 
 
 def intro_graphic():
@@ -68,7 +67,6 @@ def intro_graphic():
 
     sense.show_message('Pitch to control', scroll_speed=0.05, text_colour=[0,0,0], back_colour=[194, 27, 209])
     sense.clear()
-    pass
 
 
 def game_over_graphic(score):
@@ -198,7 +196,7 @@ def main():
         if iterator >= GAME_LENGTH:
             if DEBUG:
                 break
-            game_over_graphics(score)
+            game_over_graphic(score)
             running = False
         
 
