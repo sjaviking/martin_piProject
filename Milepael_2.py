@@ -27,6 +27,7 @@ GAME_LENGTH = 200
 CAR_COLOR = (255, 255, 255)
 GATE_COLOR = (255, 0, 0)
 NOCOLOR = (0, 0, 0)
+MUSIC_FILE = "soundtrack_mgp.wav"
 
 def restrict_value(value, min_value, max_value):
     return max(min_value, min(max_value, value))
@@ -131,6 +132,7 @@ def main():
     CAR_COLOR = (255, 255, 255)
 
     intro_graphic()
+    os.system("mpg123" + MUSIC_FILE)
 
     #Spillet starter
     while running:
