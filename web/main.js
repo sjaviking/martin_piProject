@@ -1,4 +1,4 @@
-const socket = io("http://pearpie.is-very-sweet.org:5001/" || location.origin)
+const socket = io(location.origin)
 
 connectionStatusText = document.getElementById("connection-status")
 connectionStatusText.style.color = "orange"

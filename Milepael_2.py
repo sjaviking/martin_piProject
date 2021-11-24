@@ -8,6 +8,7 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 import threading
 from logging.config import dictConfig
+import sys
 
 # Om du kjører koden lokalt kan du sette DEBUG til True.
 # -- printer til terminal i stedet for RPi sensehat
@@ -269,9 +270,18 @@ def host_websocket():
         http://pearpie.is-very-sweet.org:5001/site/index.html
     """
     configure_flask_logger()
-    app.run(host="0.0.0.0", port=5001)
+    port=443
+    # Port 443 is HTTPS
+    if port == 443:
+        ssl_certificate_folder = "/etc/letsencrypt/live/epstin.com/"
+        context = (ssl_certificate_folder + "cert.pem", ssl_certificate_folder + "privkey.pem")#certificate and key files
+        app.run(host="0.0.0.0", port=port, ssl_context=context)
+    else:
+        app.run(host="0.0.0.0", port=port)
     socketio.run(app)
 
 if __name__ == "__main__":
-    threading.Thread(target=host_websocket).start()
+    # use command "sudo python3 Milepael_2.py host" to host multiplayer
+    if sys.argv[1] == "host":
+        threading.Thread(target=host_websocket).start()
     main()
