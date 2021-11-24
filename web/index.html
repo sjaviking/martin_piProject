@@ -4,12 +4,13 @@
     <script src="https://cdn.socket.io/4.4.0/socket.io.min.js"
         integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj"
         crossorigin="anonymous"></script>
-    <script defer src="main.js"></script>
+    <script defer src="main.js?version=3"></script>
     <h1>
         Press <span id="left-arrow">⬅️</span> and <span id="right-arrow">➡️</span> to control the car on the Raspberry
         PI
     </h1>
     <h2 id="connection-status">Status: Connecting ...</h2>
+    <button id="toggle-gyro-button" onclick="onToggleGyro()" style="background-color: rgb(78, 25, 25); color: white; height: 100px; width: 100px; border:black 1px solid;">Enable Gyro</button>
 </body>
 
 </html>

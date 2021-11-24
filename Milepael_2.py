@@ -1,13 +1,8 @@
 import random
 import time
 import os
-
-from flask import Flask
-from sense_hat import SenseHat
-from flask_cors import CORS
-from flask_socketio import SocketIO
+import sys
 import threading
-from logging.config import dictConfig
 
 # Om du kjører koden lokalt kan du sette DEBUG til True.
 # -- printer til terminal i stedet for RPi sensehat
@@ -36,9 +31,12 @@ NOCOLOR = (0, 0, 0)
 def restrict_value(value, min_value, max_value):
     return max(min_value, min(max_value, value))
     
-def move_car(change):
+def move_car_to(pos):
     global car_x_pos
-    car_x_pos = restrict_value(car_x_pos + change, 0, COLS - 1)
+    car_x_pos = pos
+    
+def move_car(change):
+    move_car_to(restrict_value(car_x_pos + change, 0, COLS - 1))
 
 def get_gate_pos():
     """Returner x-posisjon til gate som du skal treffe med bilen"""
@@ -213,56 +211,77 @@ def main():
         #Delay
         time.sleep(FRAME_DURATION)
 
-app = Flask(__name__, static_url_path='/site', static_folder='web')
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
-socketio = SocketIO(app, cors_allowed_origins="*")
-
-@socketio.on('move_left')
-def on_socket_move_left():
-    move_car(-1)
-
-@socketio.on('move_right')
-def on_socket_move_right():
-    move_car(1)
-
-@socketio.on('stop_moving_left')
-def on_socket_stop_move_left():
-    # TODO: Implement holding button down to move car
-    pass
-
-@socketio.on('stop_moving_right')
-def on_socket_stop_move_right():
-    # TODO: Implement holding button down to move car
-    pass
-
-def configure_flask_logger():
-    """Makes the logs less verbose"""
-    dictConfig({
-        'version': 1,
-        'formatters': {'default': {
-            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-        }},
-        'handlers': {'wsgi': {
-            'class': 'logging.StreamHandler',
-            'stream': 'ext://flask.logging.wsgi_errors_stream',
-            'formatter': 'default'
-        }},
-        'root': {
-            'level': 'ERROR',
-            'handlers': ['wsgi']
-        }
-    })
-
 def host_websocket():
     """
         Multiplayer is hosted on
         http://pearpie.is-very-sweet.org:5001/site/index.html
     """
+    from flask import Flask
+    from sense_hat import SenseHat
+    from flask_cors import CORS
+    from flask_socketio import SocketIO
+    from logging.config import dictConfig
+    
+    app = Flask(__name__, static_url_path='/site', static_folder='web')
+    cors = CORS(app)
+    app.config['CORS_HEADERS'] = 'Content-Type'
+    socketio = SocketIO(app, cors_allowed_origins="*")
+
+    @socketio.on('move_to')
+    def on_socket_move_to(json):
+        # Json is in this case an int sent by the ws client
+        move_car_to(json)
+        print(car_x_pos)
+
+    @socketio.on('move_left')
+    def on_socket_move_left(json):
+        move_car(-1)
+
+    @socketio.on('move_right')
+    def on_socket_move_right(json):
+        move_car(1)
+
+    @socketio.on('stop_moving_left')
+    def on_socket_stop_move_left(json):
+        # TODO: Implement holding button down to move car
+        pass
+
+    @socketio.on('stop_moving_right')
+    def on_socket_stop_move_right(json):
+        # TODO: Implement holding button down to move car
+        pass
+
+    def configure_flask_logger():
+        """Makes the logs less verbose"""
+        dictConfig({
+            'version': 1,
+            'formatters': {'default': {
+                'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+            }},
+            'handlers': {'wsgi': {
+                'class': 'logging.StreamHandler',
+                'stream': 'ext://flask.logging.wsgi_errors_stream',
+                'formatter': 'default'
+            }},
+            'root': {
+                'level': 'ERROR',
+                'handlers': ['wsgi']
+            }
+        })
+    
     configure_flask_logger()
-    app.run(host="0.0.0.0", port=5001)
+    port=443
+    # Port 443 is HTTPS
+    if port == 443:
+        ssl_certificate_folder = "/etc/letsencrypt/live/epstin.com/"
+        context = (ssl_certificate_folder + "cert.pem", ssl_certificate_folder + "privkey.pem")#certificate and key files
+        app.run(host="0.0.0.0", port=port, ssl_context=context)
+    else:
+        app.run(host="0.0.0.0", port=port)
     socketio.run(app)
 
 if __name__ == "__main__":
-    threading.Thread(target=host_websocket).start()
+    # use command "sudo python3 Milepael_2.py host" to host multiplayer
+    if sys.argv[1] == "host":
+        threading.Thread(target=host_websocket).start()
     main()

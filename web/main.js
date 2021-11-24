@@ -1,4 +1,4 @@
-const socket = io("http://pearpie.is-very-sweet.org:5001/" || location.origin)
+const socket = io(location.origin)
 
 connectionStatusText = document.getElementById("connection-status")
 connectionStatusText.style.color = "orange"
@@ -14,9 +14,9 @@ socket.on('disconnect', () => {
     connectionStatusText.style.color = "red"
 });
 
-function emit(event) {
+function emit(event, data) {
     if (socket.connected) {
-        socket.emit(event)
+        socket.emit(event, data)
     }
 }
 
@@ -66,3 +66,49 @@ window.addEventListener('keyup', (event) => {
         }
     }
 })
+
+const DEADZONE = 5
+const ANGLE_SPAN = 40
+const MAX_ANGLE = ANGLE_SPAN * 2
+const CAR_MAX_POSITION = 7
+const CAR_MIN_POSITION = 0
+
+let enableGyro = false
+let carPosition = 3
+
+function carPositionFrom(angle) {
+    if (angle > ANGLE_SPAN) {
+        return CAR_MAX_POSITION
+    }
+    if (angle < -ANGLE_SPAN) {
+        return CAR_MIN_POSITION
+    }
+    if((angle > -DEADZONE) && (angle < DEADZONE)) {
+        return carPosition
+    }
+    const absoluteAngle = angle + ANGLE_SPAN
+    return Math.round((absoluteAngle / MAX_ANGLE * (CAR_MAX_POSITION - CAR_MIN_POSITION)) + CAR_MIN_POSITION)
+}
+
+function onOrientation(event){
+        // const x = event.alpha
+        const y = event.beta
+        // const z = event.gamma
+        const newCarPosition = carPositionFrom(y)
+        if(newCarPosition != carPosition) {
+            carPosition = newCarPosition
+            emit('move_to', carPosition)
+        }
+}
+
+function onToggleGyro() {
+    enableGyro = !enableGyro
+    button = document.getElementById("toggle-gyro-button")
+    button.innerHTML = enableGyro ? "Disable Gyro" : "Enable Gyro"
+    button.style.backgroundColor = enableGyro ? "green" : "rgb(78, 25, 25)"
+    if(enableGyro) {
+        window.addEventListener('deviceorientation', onOrientation)
+    } else {
+        window.removeEventListener('deviceorientation', onOrientation)
+    }
+}
