@@ -120,21 +120,13 @@ def main():
     running = True
     iterator = 0
     score = 0
-    buffer = []
-
-    ROWS = 8
-    COLS = 8
-
-    GATE_FREQUENCY = 8
-    GATE_WIDTH = 4
-    CAR_Y_POS = 1
-    GAME_LENGTH = 120
-    CAR_COLOR = (255, 255, 255)
-
-    intro_graphic()
-    os.system("mpg123" + MUSIC_FILE)
 
     #Spillet starter
+    if not DEBUG:
+        intro_graphic()
+        os.system("mpg123" + MUSIC_FILE)
+
+    #Hovedloopen som kjører så lenge spillet varer
     while running:
         #Lager ny buffer (som til slutt skal printes til skjermen)
         buffer = [[NOCOLOR for x in range(COLS)] for y in range(ROWS)]
@@ -284,6 +276,7 @@ def host_websocket():
 
 if __name__ == "__main__":
     # use command "sudo python3 Milepael_2.py host" to host multiplayer
-    if sys.argv[1] == "host":
-        threading.Thread(target=host_websocket).start()
+    if len(sys.argv) == 0:
+        if sys.argv[1] == "host":
+            threading.Thread(target=host_websocket).start()
     main()
