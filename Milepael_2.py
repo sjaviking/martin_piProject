@@ -1,14 +1,8 @@
 import random
 import time
 import os
-
-from flask import Flask
-from sense_hat import SenseHat
-from flask_cors import CORS
-from flask_socketio import SocketIO
-import threading
-from logging.config import dictConfig
 import sys
+import threading
 
 # Om du kjører koden lokalt kan du sette DEBUG til True.
 # -- printer til terminal i stedet for RPi sensehat
@@ -217,58 +211,64 @@ def main():
         #Delay
         time.sleep(FRAME_DURATION)
 
-app = Flask(__name__, static_url_path='/site', static_folder='web')
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
-socketio = SocketIO(app, cors_allowed_origins="*")
-
-@socketio.on('move_to')
-def on_socket_move_to(json):
-    # Json is in this case an int sent by the ws client
-    move_car_to(json)
-    print(car_x_pos)
-
-@socketio.on('move_left')
-def on_socket_move_left(json):
-    move_car(-1)
-
-@socketio.on('move_right')
-def on_socket_move_right(json):
-    move_car(1)
-
-@socketio.on('stop_moving_left')
-def on_socket_stop_move_left(json):
-    # TODO: Implement holding button down to move car
-    pass
-
-@socketio.on('stop_moving_right')
-def on_socket_stop_move_right(json):
-    # TODO: Implement holding button down to move car
-    pass
-
-def configure_flask_logger():
-    """Makes the logs less verbose"""
-    dictConfig({
-        'version': 1,
-        'formatters': {'default': {
-            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-        }},
-        'handlers': {'wsgi': {
-            'class': 'logging.StreamHandler',
-            'stream': 'ext://flask.logging.wsgi_errors_stream',
-            'formatter': 'default'
-        }},
-        'root': {
-            'level': 'ERROR',
-            'handlers': ['wsgi']
-        }
-    })
-
 def host_websocket():
     """
         Multiplayer is hosted on
         http://pearpie.is-very-sweet.org:5001/site/index.html
     """
+    from flask import Flask
+    from sense_hat import SenseHat
+    from flask_cors import CORS
+    from flask_socketio import SocketIO
+    from logging.config import dictConfig
+    
+    app = Flask(__name__, static_url_path='/site', static_folder='web')
+    cors = CORS(app)
+    app.config['CORS_HEADERS'] = 'Content-Type'
+    socketio = SocketIO(app, cors_allowed_origins="*")
+
+    @socketio.on('move_to')
+    def on_socket_move_to(json):
+        # Json is in this case an int sent by the ws client
+        move_car_to(json)
+        print(car_x_pos)
+
+    @socketio.on('move_left')
+    def on_socket_move_left(json):
+        move_car(-1)
+
+    @socketio.on('move_right')
+    def on_socket_move_right(json):
+        move_car(1)
+
+    @socketio.on('stop_moving_left')
+    def on_socket_stop_move_left(json):
+        # TODO: Implement holding button down to move car
+        pass
+
+    @socketio.on('stop_moving_right')
+    def on_socket_stop_move_right(json):
+        # TODO: Implement holding button down to move car
+        pass
+
+    def configure_flask_logger():
+        """Makes the logs less verbose"""
+        dictConfig({
+            'version': 1,
+            'formatters': {'default': {
+                'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+            }},
+            'handlers': {'wsgi': {
+                'class': 'logging.StreamHandler',
+                'stream': 'ext://flask.logging.wsgi_errors_stream',
+                'formatter': 'default'
+            }},
+            'root': {
+                'level': 'ERROR',
+                'handlers': ['wsgi']
+            }
+        })
+    
     configure_flask_logger()
     port=443
     # Port 443 is HTTPS
