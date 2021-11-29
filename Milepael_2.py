@@ -6,6 +6,30 @@ import threading
 
 # Om du kjører koden lokalt kan du sette DEBUG til True.
 # -- printer til terminal i stedet for RPi sensehat
+
+"""
+En liten visualisering på hvordan BUFFER fungerer
+Det er en liste, delt inn i 8 lister, alle med 8 verdier hver
+Hver liste fungerer som en y verdi, og hvert element i listen fungerer som en x verdi
+Ser litt sånn her ut:
+
+BUFFER:
+--                                           --
+| y_0[x_0, x_1, x_2, x_3, x_4, x_5, x_6, x_7] |
+| y_1[x_0, x_1, x_2, x_3, x_4, x_5, x_6, x_7] |
+| y_2[x_0, x_1, x_2, x_3, x_4, x_5, x_6, x_7] |
+| ... -->                                     |
+--                                           --
+Eksempel:
+Med fuel ønsker vi bare å bruke x_7 pixler
+Derfor henter vi disse pixlene med f.eks en for/while løkke
+hvor y varierer, mens x er konstant
+i = 0
+while i < 8:
+    x_kordinater = BUFFER[i][7]
+    i += 1
+"""
+
 DEBUG = True
 
 if not DEBUG:
@@ -20,6 +44,7 @@ FRAME_DURATION = 1 / FPS
 
 GATE_FREQUENCY = 8
 FUEL_FREQUENCY = 23
+FUEL_DECREASE = 4
 GATE_WIDTH = 2
 CAR_Y_POS = 6
 GAME_LENGTH = 200
@@ -50,6 +75,28 @@ def get_gate_pos():
 
     gate_pos = random.randint(0, right_pole_max)
     return gate_pos
+
+
+def draw_fuel(mod_buffer, x):
+    """Mellom 0 og 8, 0 er null fuel, 8 er max fuel
+    funksjonen tar inn buffer-variabel og x (fuel)
+    returnerer en modifisert buffer"""
+    x_pos_fuelGauge_lokal = 7 #sier bare hvilken kolonne du ønsker
+    i = 0
+    u = 0
+    #Dette skriver om på buffer, og lager en kollonne med fuel
+    while i < x:
+        mod_buffer[i][x_pos_fuelGauge_lokal] = (255 - u, u, 0)
+        i += 1
+        u += 36
+        u = 0 #bruker u som nullverdi for neste whileløkke
+        #og beholder i, ettersom i er y verdi for sorte pixler
+    resterende_pixler = 8 - x
+    while u < resterende_pixler:
+        mod_buffer[i][x_pos_fuelGauge_lokal] = BLACK
+        u += 1
+        i += 1
+      return mod_buffer #returnerer en modifisert buffer
 
 
 def intro_graphic():
@@ -89,19 +136,15 @@ def game_over_graphic(score):
 def get_imu_values():
     """Få xyz-verdi"""
     _gyro = sense.get_gyroscope()
-    yaw = _gyro["yaw"]
-    return round(yaw)
+    pitch = _gyro["pitch"]
+    return round(pitch)
 
 
 def calculate_car_position(imu_values):
-    """Returner x-posisjon for bilen"""    
-    global turn
-    
-    if 270 < imu_values < 315 and turn < 7:
-      turn += 1
-
-    elif 45 < imu_values < 90 and turn > 0:
-      turn -= 1
+    """Returner x-posisjon for bilen"""
+    for number in range(-20, 20, 5):
+        if imu_values in range(number, number+5):
+            return imu_values/2.5
 
 
 def debug_print(buffer):
@@ -122,6 +165,7 @@ def main():
     running = True
     iterator = 0
     score = 0
+    fuel = 8
 
     #Spillet starter
     if not DEBUG:
@@ -143,9 +187,9 @@ def main():
         if not DEBUG:
             car_x_pos = calculate_car_position(imu_values)
         else:
-            imu_values = get_imu_values()
-            calculate_car_position(imu_values)
-            car_x_pos = 4 + turn
+            #TODO: legg inn keyboard-kontroller her så du kan 
+            # styre med piltastene på pc
+            car_x_pos = 3
 
 
         #Legg bilen til i printebuffer
@@ -161,6 +205,12 @@ def main():
         #TODO: legg til fuel-tønner som dukker opp etter FUEL_FREQUENCY
         # antall iterasjoner. Når du treffer fuel fyller du opp baren
         # på høyre side av skjermen. Går du tom for fuel er spillet over.
+        
+        #Får inn buffer og fuel verdi, endrer buffer til å inneholde riktig fuelGauge
+        if iterator % GATE_FREQUENCY*FUEL_DECREASE == 0:
+            fuel -= 1
+        buffer = draw_fuel(buffer, fuel)
+        
 
 
         #Legg gaten til i printebuffer
