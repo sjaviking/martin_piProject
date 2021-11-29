@@ -96,7 +96,7 @@ def draw_fuel(mod_buffer, x):
         mod_buffer[i][x_pos_fuelGauge_lokal] = BLACK
         u += 1
         i += 1
-      return mod_buffer #returnerer en modifisert buffer
+        return mod_buffer #returnerer en modifisert buffer
 
 
 def intro_graphic():
