@@ -53,58 +53,55 @@ def get_gate_pos():
 
 
 def intro_graphic():
-    sense.low_light = True  # Bruker lavlysmodus
-    TheGame = 'Midjo GP 1970'  # Spillets navn
-    # Printer tekst med scroll spedd 0.06s, sort tekst og faget bakgunn
+    sense.low_light = True
+    TheGame = 'Midjo GP 1970'
     sense.show_message('Welcome to', scroll_speed=0.06, text_colour=[0,0,0], back_colour=[194, 27, 209])
 
-    sense.low_ligh = False  # fjerner lowlight for intens avduking av spillets navn
-    # for løkke for å stave spillnavn
-    for q in range(0, len(TheGame)-1, 2):   # Teller annen hver karakter i navnet
-      # Printer hver odde bokstav meg tekst hvit og sort bakgrunn
+    sense.low_ligh = False
+    for q in range(0, len(TheGame)-1, 2):
       sense.show_letter(TheGame[q], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
-      time.sleep(0.5)  # Delay på 0.5s
-      # Printer hver partall bokstav med hvit bakrunn og sort tekst
+      time.sleep(0.5)
       sense.show_letter(TheGame[q+1], text_colour=[0,0,0], back_colour=[255, 255, 255])
-      time.sleep(0.5)  # Delay på 0.5s
-    sense.low_light = True  # Setter på lowlight igjen
+      time.sleep(0.5)
+    sense.low_light = True
 
-    # Viser teskt med scroll spedd 0.05 og farget bakgrunn
     sense.show_message('Pitch to control', scroll_speed=0.05, text_colour=[0,0,0], back_colour=[194, 27, 209])
-    sense.clear()  # Tømmer led-matrise
+    sense.clear()
 
 
 def game_over_graphic(score):
     score = str(123) # midlertidig poengsum, for at proragm skal kjøre
  
     sense.low_light = True   # Lav lysintensitet
-    # Viser teksten med scroll speed 0.06s og farge vist i lister
+
     sense.show_message("Game Over! Score:", scroll_speed=0.06, text_colour=[255, 0, 0], back_colour=[50, 166, 168])
-    # For-løkke for å printe poeng sum
-    for p in range(0, len(str(score))):   # for hvert siffer i poengsum
-        sense.show_letter(score[p], back_colour=[194, 27, 209])  # Bruker show letter for 
-        time.sleep(0.5)  # Setter delay etter tall på 0.5s
+
+    for p in range(0, len(str(score))):   # Printer hvert siffer i poengsum
+        sense.show_letter(score[p], back_colour=[194, 27, 209])
+        time.sleep(0.5)
         sense.clear(194, 27, 209)  # Clearer ut forgie siffer
-        time.sleep(0.5) # Delay før neste siffer
+        time.sleep(0.5)
 
     sense.show_message("Points", back_colour=[194, 27, 209])   # Printer points til slutt
     sense.clear()  # Clearer matrise
 
-def out_off_fule_graphic():
-    # Noe kult
 
 def get_imu_values():
     """Få xyz-verdi"""
     _gyro = sense.get_gyroscope()
-    pitch = _gyro["pitch"]
-    return round(pitch)
+    yaw = _gyro["yaw"]
+    return round(yaw)
 
 
 def calculate_car_position(imu_values):
-    """Returner x-posisjon for bilen"""
-    for number in range(-20, 20, 5):
-        if imu_values in range(number, number+5):
-            return imu_values/2.5
+    """Returner x-posisjon for bilen"""    
+    global turn
+    
+    if 270 < imu_values < 315 and turn < 7:
+      turn += 1
+
+    elif 45 < imu_values < 90 and turn > 0:
+      turn -= 1
 
 
 def debug_print(buffer):
@@ -146,9 +143,9 @@ def main():
         if not DEBUG:
             car_x_pos = calculate_car_position(imu_values)
         else:
-            #TODO: legg inn keyboard-kontroller her så du kan 
-            # styre med piltastene på pc
-            car_x_pos = 3
+            imu_values = get_imu_values()
+            calculate_car_position(imu_values)
+            car_x_pos = 4 + turn
 
 
         #Legg bilen til i printebuffer
