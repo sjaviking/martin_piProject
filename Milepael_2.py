@@ -90,7 +90,7 @@ def game_over_graphic(score):
     sense.show_message("Points", back_colour=[194, 27, 209])   # Printer points til slutt
     sense.clear()  # Clearer matrise
 
-def out_off_fule():
+def out_off_fule_graphic():
     # Noe kult
 
 def get_imu_values():
