@@ -132,22 +132,22 @@ def intro_graphic():
 
 
 def game_over_graphic(score):
-    score = str(123) # midlertidig poengsum, for at proragm skal kjøre
-
-    sense.low_light = True   # Lav lysintensitet
+  StrScore = str(score)  # egen variabel med score som string
+  sense.low_light = True   # Lav lysintensitet
+  
+  # Viser teksten med scroll speed 0.04s og farge vist i lister
+  sense.show_message("Game Over! Score:", scroll_speed=0.04, text_colour=[255, 0, 0], back_colour=[194, 27, 209])
     
-    # Viser teksten med scroll speed 0.06s og farge vist i lister
-    sense.show_message("Game Over! Score:", scroll_speed=0.06, text_colour=[255, 0, 0], back_colour=[50, 166, 168])
-    
-    # For-løkke for å printe poeng sum et siffer av gangen
-    for number in range(0, len(str(score))):   # for hvert siffer i poengsum
-        sense.show_letter(score[number], back_colour=[194, 27, 209])  # Bruker show letter for 
-        time.sleep(0.5)  # Setter delay etter tall på 0.5s
-        sense.clear(194, 27, 209)  # Clearer ut forgie siffer
-        time.sleep(0.5) # Delay før neste siffer
+  # For-løkke for å printe poeng sum et siffer av gangen
+  for number in range(0, len(StrScore))):   # for hvert siffer i poengsum
+    sense.show_letter(score[number], back_colour=[194, 27, 209])  # Bruker show letter for 
+    time.sleep(0.4)  # Setter delay etter tall på 0.4s
+    sense.clear(194, 27, 209)  # Clearer ut forgie siffer
+    time.sleep(0.4) # Delay før neste siffer
 
-    sense.show_message("Points", back_colour=[194, 27, 209])   # Printer points til slutt
-    sense.clear()  # Clearer matrise
+ # Printer points til slutt med speed 0.04
+  sense.show_message("Points", scroll_speed=0.04, back_colour=[194, 27, 209])
+  sense.clear()  # Clearer matrise
 
 
 def get_imu_values():
