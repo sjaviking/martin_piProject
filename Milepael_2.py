@@ -115,50 +115,50 @@ def draw_fuel(mod_buffer, x):
 
 
 def intro_graphic():
-  sense.low_light = True  # Bruker lavlysmodus
-  TheGame = 'Midjo GP 1970'  # Spillets navn
-  TheGame_odd = TheGame[::2] # Skiller ut odde karakterer
-  TheGame_even = TheGame[1::2] # Skiller ut jevne karakterer
+    sense.low_light = True  # Bruker lavlysmodus
+    TheGame = 'Midjo GP 1970'  # Spillets navn
+    TheGame_odd = TheGame[::2] # Skiller ut odde karakterer
+    TheGame_even = TheGame[1::2] # Skiller ut jevne karakterer
 
-  # Printer tekst med scroll spedd 0.04s, sort tekst og faget bakgunn
-  sense.show_message('Welcome to', scroll_speed=0.04, text_colour=[0,0,0], back_colour=[194, 27, 209])
+    # Printer tekst med scroll spedd 0.04s, sort tekst og faget bakgunn
+    sense.show_message('Welcome to', scroll_speed=0.04, text_colour=[0,0,0], back_colour=[194, 27, 209])
 
-  sense.low_ligh = False  # fjerner lowlight for intens avduking av spillets navn
-  # for løkke for å stave spillnavn meg generel lengde på spillets navn. Dette selv om variablene er kortere
-  for character in range(0, len(TheGame)):
+    sense.low_ligh = False  # fjerner lowlight for intens avduking av spillets navn
+    # for løkke for å stave spillnavn meg generel lengde på spillets navn. Dette selv om variablene er kortere
+    for character in range(0, len(TheGame)):
   
-    if character < len(TheGame_odd):  # Printer kun hvis charakter er innen range til odd variabel
-      # Printer hver odde bokstav meg tekst hvit og sort bakgrunn
-      sense.show_letter(TheGame_odd[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
-      time.sleep(0.4)  # Delay på 0.4s
-    if character < len(TheGame_even): # Printer kun hvis charakter er innen range til even variabel
-      # Printer hver partall bokstav med hvit bakrunn og sort tekst
-      sense.show_letter(TheGame_even[character], text_colour=[0,0,0], back_colour=[255, 255, 255])
-      time.sleep(0.4)  # Delay på 0.4s
-  sense.low_light = True # Setter tilbake til lowlight igjen
+        if character < len(TheGame_odd):  # Printer kun hvis charakter er innen range til odd variabel
+            # Printer hver odde bokstav meg tekst hvit og sort bakgrunn
+            sense.show_letter(TheGame_odd[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
+            time.sleep(0.4)  # Delay på 0.4s
+        if character < len(TheGame_even): # Printer kun hvis charakter er innen range til even variabel
+            # Printer hver partall bokstav med hvit bakrunn og sort tekst
+            sense.show_letter(TheGame_even[character], text_colour=[0,0,0], back_colour=[255, 255, 255])
+            time.sleep(0.4)  # Delay på 0.4s
+    sense.low_light = True # Setter tilbake til lowlight igjen
 
-  # Viser teskt med scroll speed 0.04 og farget bakgrunn
-  sense.show_message('Pitch to control', scroll_speed=0.04, text_colour=[0,0,0], back_colour=[194, 27, 209])
-  sense.clear()  # Tømmer led-matrise
+    # Viser teskt med scroll speed 0.04 og farget bakgrunn
+    sense.show_message('Pitch to control', scroll_speed=0.04, text_colour=[0,0,0], back_colour=[194, 27, 209])
+    sense.clear()  # Tømmer led-matrise
 
 
 def game_over_graphic(score):
-  StrScore = str(score)  # egen variabel med score som string
-  sense.low_light = True   # Lav lysintensitet
+    StrScore = str(score)  # egen variabel med score som string
+    sense.low_light = True   # Lav lysintensitet
   
-  # Viser teksten med scroll speed 0.04s og farge vist i lister
-  sense.show_message("Game Over! Score:", scroll_speed=0.04, text_colour=[255, 0, 0], back_colour=[194, 27, 209])
+    # Viser teksten med scroll speed 0.04s og farge vist i lister
+    sense.show_message("Game Over! Score:", scroll_speed=0.04, text_colour=[255, 0, 0], back_colour=[194, 27, 209])
     
-  # For-løkke for å printe poeng sum et siffer av gangen
-  for number in range(0, len(StrScore))):   # for hvert siffer i poengsum
-    sense.show_letter(score[number], back_colour=[194, 27, 209])  # Bruker show letter for 
-    time.sleep(0.4)  # Setter delay etter tall på 0.4s
-    sense.clear(194, 27, 209)  # Clearer ut forgie siffer
-    time.sleep(0.4) # Delay før neste siffer
+    # For-løkke for å printe poeng sum et siffer av gangen
+    for number in range(0, len(StrScore))):   # for hvert siffer i poengsum
+        sense.show_letter(score[number], back_colour=[194, 27, 209])  # Bruker show letter for 
+        time.sleep(0.4)  # Setter delay etter tall på 0.4s
+        sense.clear(194, 27, 209)  # Clearer ut forgie siffer
+        time.sleep(0.4) # Delay før neste siffer
 
- # Printer points til slutt med speed 0.04
-  sense.show_message("Points", scroll_speed=0.04, back_colour=[194, 27, 209])
-  sense.clear()  # Clearer matrise
+    # Printer points til slutt med speed 0.04
+    sense.show_message("Points", scroll_speed=0.04, back_colour=[194, 27, 209])
+    sense.clear()  # Clearer matrise
 
 
 def get_imu_values():
