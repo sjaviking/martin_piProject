@@ -76,6 +76,10 @@ def get_gate_pos():
     gate_pos = random.randint(0, right_pole_max)
     return gate_pos
 
+def get_fuel_pos():
+    """Returnerer x-posisjon til fuel som du skal treffe"""
+    fuel_pos = random.randint(0, 7)
+    return fuel_pos
 
 def draw_fuel(mod_buffer, x):
     """Mellom 0 og 8, 0 er null fuel, 8 er max fuel
