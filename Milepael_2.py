@@ -30,7 +30,7 @@ while i < 8:
     i += 1
 """
 
-DEBUG = True
+DEBUG = False
 
 if not DEBUG:
     from sense_hat import SenseHat
@@ -42,15 +42,19 @@ COLS = 8
 FPS = 5
 FRAME_DURATION = 1 / FPS
 
-GATE_FREQUENCY = 8
-FUEL_FREQUENCY = 23
+FUEL_SPAWN_CHANCE = 10
 FUEL_DECREASE = 4
+FUEL_FREQUENCY = 8
+GATE_FREQUENCY = 8
 GATE_WIDTH = 2
 CAR_Y_POS = 6
 GAME_LENGTH = 200
+
 CAR_COLOR = (255, 255, 255)
+FUEL_COLOR = (120, 255, 0)
 GATE_COLOR = (255, 0, 0)
 NOCOLOR = (0, 0, 0)
+
 MUSIC_FILE = "soundtrack_mgp.wav"
 
 
@@ -78,7 +82,7 @@ def get_gate_pos():
 
 def get_fuel_pos():
     """Returnerer x-posisjon til fuel som du skal treffe"""
-    fuel_pos = random.randint(0, 7)
+    fuel_pos = random.randint(0, 6)
     return fuel_pos
 
 def draw_fuel(mod_buffer, x):
@@ -97,7 +101,7 @@ def draw_fuel(mod_buffer, x):
         #og beholder i, ettersom i er y verdi for sorte pixler
     resterende_pixler = 8 - x
     while u < resterende_pixler:
-        mod_buffer[i][x_pos_fuelGauge_lokal] = BLACK
+        mod_buffer[i][x_pos_fuelGauge_lokal] = NOCOLOR
         u += 1
         i += 1
         return mod_buffer #returnerer en modifisert buffer
@@ -167,10 +171,6 @@ def calculate_car_position(imu_values):
 
     elif 45 < imu_values < 90:
       turn -= 1
-    
-    else:
-      turn = turn
-    
     return _mid + turn
 
 def debug_print(buffer):
@@ -211,7 +211,8 @@ def main():
 
         #Finn ut hvor bilen skal stå
         if not DEBUG:
-            car_x_pos = calculate_car_position(imu_values)
+            turn = 0
+            car_x_pos = int(calculate_car_position(turn, imu_values))
         else:
             #TODO: legg inn keyboard-kontroller her så du kan 
             # styre med piltastene på pc
@@ -228,24 +229,30 @@ def main():
             gate_y_start = iterator
 
 
-        #TODO: legg til fuel-tønner som dukker opp etter FUEL_FREQUENCY
-        # antall iterasjoner. Når du treffer fuel fyller du opp baren
-        # på høyre side av skjermen. Går du tom for fuel er spillet over.
-        
-        #Får inn buffer og fuel verdi, endrer buffer til å inneholde riktig fuelGauge
-        if iterator % GATE_FREQUENCY*FUEL_DECREASE == 0:
-            fuel -= 1
-        buffer = draw_fuel(buffer, fuel)
-        
-
-
         #Legg gaten til i printebuffer
         gate_y_pos = abs(iterator - gate_y_start)
         buffer[gate_y_pos][gate_x_pos] = GATE_COLOR                 #Venstre påle
         buffer[gate_y_pos][gate_x_pos + GATE_WIDTH] = GATE_COLOR    #Høyre påle
 
 
+        #Etter "FUEL_FREQUENCY" iterasjoner, lag en ny gate
+        if iterator % FUEL_FREQUENCY == 1:
+            fuel_x_pos = get_fuel_pos()
+            fuel_y_start = iterator
+            
 
+        #Legg fuel til i printebuffer
+        if iterator > 1:
+            fuel_y_pos = abs(iterator - fuel_y_start)
+            buffer[fuel_y_pos][fuel_x_pos] = FUEL_COLOR
+        
+        
+        #Får inn buffer og fuel verdi, endrer buffer til å inneholde riktig fuelGauge
+        if iterator % GATE_FREQUENCY*FUEL_DECREASE == 0:
+            fuel -= 1
+        buffer = draw_fuel(buffer, fuel)
+
+        
         #Når bilen passerer en gate, sjekk om du traff
         if CAR_Y_POS == gate_y_pos:
             if gate_x_pos <= car_x_pos <= gate_x_pos + GATE_WIDTH:
@@ -269,7 +276,7 @@ def main():
             flat_buffer = [element for sublist in buffer for element in sublist]
 
             #Printer til sensehat-skjermen
-            sense.set_pixels(buffer)
+            sense.set_pixels(flat_buffer)
 
 
         #Når det har gått GAME_LENGTH antall iterasjoner, stopp spillet
