@@ -39,16 +39,19 @@ if not DEBUG:
 ROWS = 8
 COLS = 8
 
-FPS = 5
+FPS = 20
 FRAME_DURATION = 1 / FPS
 
-FUEL_SPAWN_CHANCE = 10
+FUEL_SPAWN_CHANCE = 2
 FUEL_DECREASE = 4
 FUEL_FREQUENCY = 8
+FUEL_SLOWNESS = 3
+
 GATE_FREQUENCY = 8
 GATE_WIDTH = 2
+GATE_SLOWNESS = 4
+
 CAR_Y_POS = 6
-GAME_LENGTH = 200
 
 CAR_COLOR = (255, 255, 255)
 FUEL_COLOR = (120, 255, 0)
@@ -92,19 +95,23 @@ def draw_fuel(mod_buffer, x):
     x_pos_fuelGauge_lokal = 7 #sier bare hvilken kolonne du ønsker
     i = 0
     u = 0
+    if x < 0:
+        return mod_buffer
+    if x > 8:
+        x = 8
     #Dette skriver om på buffer, og lager en kollonne med fuel
     while i < x:
         mod_buffer[i][x_pos_fuelGauge_lokal] = (255 - u, u, 0)
         i += 1
         u += 36
-        u = 0 #bruker u som nullverdi for neste whileløkke
+    u = 0 #bruker u som nullverdi for neste whileløkke
         #og beholder i, ettersom i er y verdi for sorte pixler
     resterende_pixler = 8 - x
     while u < resterende_pixler:
         mod_buffer[i][x_pos_fuelGauge_lokal] = NOCOLOR
         u += 1
         i += 1
-        return mod_buffer #returnerer en modifisert buffer
+    return mod_buffer #returnerer en modifisert buffer
 
 
 def intro_graphic():
@@ -153,27 +160,26 @@ def game_over_graphic(score):
   sense.show_message("Points", scroll_speed=0.04, back_colour=[194, 27, 209])
   sense.clear()  # Clearer matrise
 
-def next_level():
-
 
 def get_imu_values():
     """Få xyz-verdi"""
     _gyro = sense.get_gyroscope()
-    yaw = _gyro["yaw"]
-    return round(yaw)
+    pitch = _gyro["pitch"]
+    return round(pitch)
 
 
-def calculate_car_position(imu_values):
-    """Returner x-posisjon for bilen"""  
-    global turn
-    _mid = 4
-    
-    if 270 < imu_values < 315:
-      turn += 1
+def calculate_car_position(gyro):
+    #Høyresving
+    if gyro <= 180:
+        pass
 
-    elif 45 < imu_values < 90:
-      turn -= 1
-    return _mid + turn
+    #Venstresving
+    if gyro >= 180:
+        gyro = - abs(360 - gyro)
+
+    #Endre bilposisjon
+    return -(gyro // 10) + 3
+
 
 def debug_print(buffer):
     os.system("clear")
@@ -194,6 +200,22 @@ def main():
     iterator = 0
     score = 0
     fuel = 8
+    turn = 0
+    visible_fuel_list = []
+    car_x_pos = 4
+
+    #TODO: reformater koden slik at en kan endre level og dermed alle frekvenser
+    #      automatisk.
+
+
+    #TODO: Endre flyten i spillet slik at det er levler.
+    # lvl 1 --> 32
+    #   speedometer-gfx
+    # lvl 2 --> 64
+    #   speedometer-gfx
+    # lvl 3 --> evig
+
+
 
     #Spillet starter
     if not DEBUG:
@@ -213,8 +235,7 @@ def main():
 
         #Finn ut hvor bilen skal stå
         if not DEBUG:
-            turn = 0
-            car_x_pos = int(calculate_car_position(turn, imu_values))
+            car_x_pos = calculate_car_position(imu_values)
         else:
             #TODO: legg inn keyboard-kontroller her så du kan 
             # styre med piltastene på pc
@@ -226,35 +247,54 @@ def main():
         
 
         #Etter "GATE_FREQUENCY" iterasjoner, lag en ny gate
-        if iterator % GATE_FREQUENCY == 0:
+        if iterator % (GATE_FREQUENCY * GATE_SLOWNESS) == 0:
             gate_x_pos = get_gate_pos()
             gate_y_start = iterator
 
 
         #Legg gaten til i printebuffer
-        gate_y_pos = abs(iterator - gate_y_start)
+        gate_y_pos = abs(iterator - gate_y_start) // GATE_SLOWNESS
         buffer[gate_y_pos][gate_x_pos] = GATE_COLOR                 #Venstre påle
         buffer[gate_y_pos][gate_x_pos + GATE_WIDTH] = GATE_COLOR    #Høyre påle
 
 
         #Etter "FUEL_FREQUENCY" iterasjoner, lag en ny gate
-        if iterator % FUEL_FREQUENCY == 1:
+        if iterator % (FUEL_FREQUENCY * FUEL_SLOWNESS) == 1:
             fuel_x_pos = get_fuel_pos()
             fuel_y_start = iterator
             
 
         #Legg fuel til i printebuffer
         if iterator > 1:
-            fuel_y_pos = abs(iterator - fuel_y_start)
+            fuel_y_pos = abs(iterator - fuel_y_start) // FUEL_SLOWNESS
             buffer[fuel_y_pos][fuel_x_pos] = FUEL_COLOR
         
-        
+
         #Får inn buffer og fuel verdi, endrer buffer til å inneholde riktig fuelGauge
-        if iterator % GATE_FREQUENCY*FUEL_DECREASE == 0:
+        if iterator % (GATE_FREQUENCY*FUEL_DECREASE) == 0:
             fuel -= 1
         buffer = draw_fuel(buffer, fuel)
 
+
+        #TODO: dette er koden for å få fuel på random posisjon, den er uferdig
+        #For "FUEL_SPAWN_CHANCE" prosent av linjene, legg en fuel til i "visible_fuel_list"
+        #if random.randint(1,100) < FUEL_SPAWN_CHANCE:
+        #    fuel_x_pos = get_fuel_pos()
+        #    fuel_y_start = iterator
+        #    visible_fuel_list.append([fuel_x_pos, fuel_y_start])
+
+
+        #Oppdaterer "visible_fuel_list" og fjerner fuel som har gått ut av banen
+        #visible_fuel_list = [[l[0], l[1] + 1] for l in visible_fuel_list]
         
+
+
+        #For alle elementer i "visible_fuel_list", legg til fuel i bufferen
+        #gate_y_pos = abs(iterator - gate_y_start)
+        #buffer[gate_y_pos][gate_x_pos] = GATE_COLOR
+        #buffer[gate_y_pos][gate_x_pos + GATE_WIDTH] = GATE_COLOR
+
+
         #Når bilen passerer en gate, sjekk om du traff
         if CAR_Y_POS == gate_y_pos:
             if gate_x_pos <= car_x_pos <= gate_x_pos + GATE_WIDTH:
@@ -264,6 +304,23 @@ def main():
                 else:
                     score += 1
                     print("Score + 1")
+
+        #TODO: Legg til poengbar på den øverste linja på skjemren. Den skal vise
+        #      poeng du har som binærtall.
+
+
+        #Når bilen passerer en fuel, sjekk om du traff
+        #FIXME: Finn ut hvorfor poengbaren er fåkka
+        if iterator > 1:
+            if CAR_Y_POS == fuel_y_pos:
+                if fuel_x_pos == car_x_pos:
+                    fuel += 1
+                    #TODO: Blink fuelbaren når du treffer fuel
+
+
+        #Om tanken blir full renner det over
+        if fuel > 8:
+            fuel = 8
 
 
         #Inkrementer iterator
@@ -281,16 +338,18 @@ def main():
             sense.set_pixels(flat_buffer)
 
 
-        #Når det har gått GAME_LENGTH antall iterasjoner, stopp spillet
-        if iterator >= GAME_LENGTH:
+        #Om du går tom for fuel er spillet over
+        if fuel <= 0:
             if DEBUG:
                 break
+            #TODO: Add Midjo som gråter når du går tom for fuel.
             game_over_graphic(score)
             running = False
         
 
         #Delay
         time.sleep(FRAME_DURATION)
+
 
 def host_websocket():
     """
