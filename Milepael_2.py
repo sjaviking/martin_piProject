@@ -104,26 +104,31 @@ def draw_fuel(mod_buffer, x):
 
 
 def intro_graphic():
-    sense.low_light = True  # Bruker lavlysmodus
-    TheGame = 'Midjo GP 1970'  # Spillets navn
-    
-    # Printer tekst med scroll spedd 0.06s, sort tekst og faget bakgunn
-    sense.show_message('Welcome to', scroll_speed=0.06, text_colour=[0,0,0], back_colour=[194, 27, 209])
+  sense.low_light = True  # Bruker lavlysmodus
+  TheGame = 'Midjo GP 1970'  # Spillets navn
+  TheGame_odd = TheGame[::2] # Skiller ut odde karakterer
+  TheGame_even = TheGame[1::2] # Skiller ut jevne karakterer
 
-    sense.low_ligh = False  # fjerner lowlight for intens avduking av spillets navn
-    # for løkke for å stave spillnavn
-    for character in range(0, len(TheGame)-1, 2):   # Teller annen hver karakter i navnet
+  # Printer tekst med scroll spedd 0.04s, sort tekst og faget bakgunn
+  sense.show_message('Welcome to', scroll_speed=0.04, text_colour=[0,0,0], back_colour=[194, 27, 209])
+
+  sense.low_ligh = False  # fjerner lowlight for intens avduking av spillets navn
+  # for løkke for å stave spillnavn meg generel lengde på spillets navn. Dette selv om variablene er kortere
+  for character in range(0, len(TheGame)):
+  
+    if character < len(TheGame_odd):  # Printer kun hvis charakter er innen range til odd variabel
       # Printer hver odde bokstav meg tekst hvit og sort bakgrunn
-      sense.show_letter(TheGame[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
-      time.sleep(0.5)  # Delay på 0.5s
+      sense.show_letter(TheGame_odd[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
+      time.sleep(0.4)  # Delay på 0.4s
+    if character < len(TheGame_even): # Printer kun hvis charakter er innen range til even variabel
       # Printer hver partall bokstav med hvit bakrunn og sort tekst
-      sense.show_letter(TheGame[character+1], text_colour=[0,0,0], back_colour=[255, 255, 255])
-      time.sleep(0.5)  # Delay på 0.5s
-    sense.low_light = True # Setter tilbake til lowlight igjen
+      sense.show_letter(TheGame_even[character], text_colour=[0,0,0], back_colour=[255, 255, 255])
+      time.sleep(0.4)  # Delay på 0.4s
+  sense.low_light = True # Setter tilbake til lowlight igjen
 
-    # Viser teskt med scroll speed 0.05 og farget bakgrunn
-    sense.show_message('Pitch to control', scroll_speed=0.05, text_colour=[0,0,0], back_colour=[194, 27, 209])
-    sense.clear()  # Tømmer led-matrise
+  # Viser teskt med scroll speed 0.04 og farget bakgrunn
+  sense.show_message('Pitch to control', scroll_speed=0.04, text_colour=[0,0,0], back_colour=[194, 27, 209])
+  sense.clear()  # Tømmer led-matrise
 
 
 def game_over_graphic(score):
