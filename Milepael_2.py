@@ -148,16 +148,25 @@ def game_over_graphic(score):
 def get_imu_values():
     """Få xyz-verdi"""
     _gyro = sense.get_gyroscope()
-    pitch = _gyro["pitch"]
-    return round(pitch)
+    yaw = _gyro["yaw"]
+    return round(yaw)
 
 
 def calculate_car_position(imu_values):
-    """Returner x-posisjon for bilen"""
-    for number in range(-20, 20, 5):
-        if imu_values in range(number, number+5):
-            return imu_values/2.5
+    """Returner x-posisjon for bilen"""  
+    global turn
+    _mid = 4
+    
+    if 270 < imu_values < 315:
+      turn += 1
 
+    elif 45 < imu_values < 90:
+      turn -= 1
+    
+    else:
+      turn = turn
+    
+    return _mid + turn
 
 def debug_print(buffer):
     os.system("clear")
