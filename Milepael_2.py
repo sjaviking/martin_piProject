@@ -153,6 +153,8 @@ def game_over_graphic(score):
   sense.show_message("Points", scroll_speed=0.04, back_colour=[194, 27, 209])
   sense.clear()  # Clearer matrise
 
+def next_level():
+
 
 def get_imu_values():
     """Få xyz-verdi"""
