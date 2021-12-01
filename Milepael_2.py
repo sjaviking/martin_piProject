@@ -141,6 +141,78 @@ def intro_graphic():
     sense.show_message('Pitch to control', scroll_speed=0.04, text_colour=[0,0,0], back_colour=[194, 27, 209])
     sense.clear()  # Tømmer led-matrise
 
+def nextLevel():
+  # Sier hvilket Level vi befinner oss i
+  Lvl = 3
+  
+  W = (255, 255, 255)
+  B = (0, 0, 0)
+  r = (255, 0, 0)
+  
+  # Tegner speedometeret
+  speedometer = [
+    B, B, W, W, W, W, B, B,
+    B, W, B, B, B, B, W, B,
+    W, B, B, B, B, B, B, W,
+    W, B, B, B, B, B, B, W,
+    W, B, B, B, B, B, B, W,
+    W, B, B, B, B, B, B, W,
+    B, W, B, B, B, B, W, r,
+    B, B, W, B, B, W, r, r,
+    ]
+  
+  # Definerer arugmentene, og sier rangen på index
+  def print_speedometer(message, maxRange):
+    sense.show_message(message, speed, text_colour=W, back_colour=B)
+    for index in range(0, maxRange):
+      plot_ranges(index)
+    
+  def plot_ranges(index):
+    # Lister over alle speedometer nivåene fra 0 til 6
+    color_ranges = [
+      [(44, 45), (51, 52)],
+      [(41, 45)],
+      [(44, 45), (35, 36), (26, 27), (17, 18)],
+      [(44, 45), (36, 37), (28, 29), (20, 21), (12, 13)],
+      [(43, 44), (36, 37), (29, 30), (22, 23)],
+      [(43, 47)],
+      [(43, 44), (52, 53)],
+      ]
+    
+    # Bytter ut pixlene i speedometeret med, 
+    # hvilket speedometer nivå som vises
+    pixels = [v for v in speedometer]
+    for (start, end) in color_ranges[index]:
+      for i in range(start, end):
+        pixels[i] = r
+    
+    # Clearer og printer ut speedometeret for hvert nivå,
+    # helt til den når siste nivå for angitt level 
+    sense.clear()
+    sense.set_pixels(pixels)
+    sleep(0.4)
+  
+  # Hastigheten på teksten som printes        
+  speed = 0.04
+  
+  # Sier hvilken speedometer nivåer som skal printes,
+  # avhengig av hvilket level vi befinner oss i
+  levelPixelRange = {
+    1: 3,
+    2: 5,
+    3: 7,
+    }
+  
+  # Level må indekseres i levelPixelRange  
+  if Lvl == 0 or Lvl > 3:
+    raise ValueError("Level must be 1, 2 or 3")
+  
+  # Printer ut meldingen av hvilket level vi befinner oss i, 
+  # og alle nivåene på speedometeret
+  print_speedometer("Lvl " + str(Lvl) , levelPixelRange[Lvl])
+    
+  sleep(1)
+    
 
 def game_over_graphic(score):
     StrScore = str(score)  # egen variabel med score som string
