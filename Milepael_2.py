@@ -151,50 +151,61 @@ def intro_graphic():
     Background = []  # Tom liste som fylles av forløkke for bakgrunn
     # For løkke for å lage bakgrunn
     for color in range(0,64): # range 64 grunnet 64 pixler
-        Background.append(g)
+      Background.append(g)
 
 
     # Første bilde med 1 bokstav
-    Midjo = [w, g, g, g, w, g, g, g,
-             w, w, g, w, w, g, g, g,
-             w, g, w, g, w, g, g, g,
-             w, g, g, g, w, g, g, g,
-             w, g, g, g, g, g, g, g,
-             g, g, g, g, g, g, g, g,
-             g, g, g, g, g, g, g, g,
-             g, g, g, g, g, g, g, g,]
+    def Midjo(g, w):
+      drawing = [w, g, g, g, w, g, g, g,
+                 w, w, g, w, w, g, g, g,
+                 w, g, w, g, w, g, g, g,
+                 w, g, g, g, w, g, g, g,
+                 w, g, g, g, g, g, g, g,
+                 g, g, g, g, g, g, g, g,
+                 g, g, g, g, g, g, g, g,
+                 g, g, g, g, g, g, g, g,]
+      return drawing
 
     # Andre bilde med 2 bosktaver
-    Grand = [w, g, g, g, w, g, g, g,
-             w, w, g, w, w, g, g, g,
-             w, g, w, g, w, g, g, g,
-             w, g, g, g, w, g, g, g,
-             w, r, r, g, g, g, g, g,
-             r, g, g, g, g, g, g, g,
-             r, g, r, r, g, g, g, g,
-             g, r, r, g, g, g, g, g,] 
+    def Grand(g, r, w):
+      drawing = [w, g, g, g, w, g, g, g,
+                w, w, g, w, w, g, g, g,
+                w, g, w, g, w, g, g, g,
+                w, g, g, g, w, g, g, g,
+                w, r, r, g, g, g, g, g,
+                r, g, g, g, g, g, g, g,
+                r, g, r, r, g, g, g, g,
+                g, r, r, g, g, g, g, g,]
+      return drawing
 
     # Tredje bilde med 3 bokstaver
-    Prix = [w, g, g, g, w, g, g, g,
-            w, w, g, w, w, g, g, g,
-            w, g, w, g, w, g, g, g,
-            w, g, g, g, w, g, g, g,
-            w, r, r, g, g, r, r, g,
-            r, g, g, g, g, r, g, r,
-            r, g, r, r, g, r, r, g,
-            g, r, r, g, g, r, g, g,]
+    def Prix(g, r, w):
+      drawing = [w, g, g, g, w, g, g, g,
+                w, w, g, w, w, g, g, g,
+                w, g, w, g, w, g, g, g,
+                w, g, g, g, w, g, g, g,
+                w, r, r, g, g, r, r, g,
+                r, g, g, g, g, r, g, r,
+                r, g, r, r, g, r, r, g,
+                g, r, r, g, g, r, g, g,]
+      return drawing
 
+    # Setter først bakgrunn
     sense.set_pixels(Background)
-    time.sleep(1)
-    sense.set_pixels(Midjo)
-    time.sleep(1)
-    sense.set_pixels(Grand)
-    time.sleep(1)
-    sense.set_pixels(Prix)
-    time.sleep(1)
-  
-    # for løkke for å stave spillnavn meg generel lengde på spillets navn. Dette selv om variablene er kortere
-    for character in range(0, len(TheGame)):
+    time.sleep(1) # Delay på 1s
+    # Setter så M i bildet
+    sense.set_pixels(Midjo(g, w))
+    time.sleep(1) # Delay på 1s
+    sense.set_pixels(Grand(g, r, w))
+    # Setter så G i bildet
+    time.sleep(1) # Delay på 1s
+    # Setter så siste bokstav i bildet
+    sense.set_pixels(Prix(g, r, w))
+    time.sleep(1) # Delay på 1s
+
+    # for løkke for å stave spillnavn meg generel lengde på spillets navn.
+    # Bruker if setning, for å unngå lengde error på stringer 
+    for character in range(0, len(TheGame)): # Løkken kjører like lenge som spillets navn.
       if character < len(TheGame_odd):  # Printer kun hvis charakter er innen range til odd variabel
         # Printer hver odde bokstav meg tekst hvit og sort bakgrunn
         sense.show_letter(TheGame_odd[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
@@ -281,20 +292,39 @@ def nextLevel():
 
 def game_over_graphic(score):
     StrScore = str(score)  # egen variabel med score som string
-    sense.low_light = True   # Lav lysintensitet
-  
-    # Viser teksten med scroll speed 0.04s og farge vist i lister
-    sense.show_message("Game Over! Score:", scroll_speed=0.04, text_colour=[255, 0, 0], back_colour=[194, 27, 209])
-    
+    g = (96, 125, 139)  # Gråfarge til bakgrunn
+    b = (0, 0, 0,) # Sort bakgrunn
+    pink = (241, 0, 245)  # Rosa hodeskalle
+    yellow = (247, 247, 0) # Rød hodeskalle
+
+    # b er bakgrunn og s er skallen. tegnet opp:
+    def skull(b , s):  # Bruker definisjon for å kunne ha forskjellige farger
+      drawing = [b, s, s, s, s, s, b, b,
+                s, s, s, s, s, s, s, b,
+                s, b, b, s, b, b, s, b,
+                s, b, b, s, b, b, s, b,
+                s, s, s, b, s, s, s, b,
+                b, s, s, s, s, s, b, b,
+                b, s, b, s, b, s, b, b,
+                b, b, b, b, b, b, b, b,]
+      return drawing
+
+    # Bruker for-løkke for å endre farge på hodeskalle
+    for color_change in range (0, 5):   # Satt til å være hver farge 5 ganger
+      sense.set_pixels(skull(b, pink))  # Rosa skalle
+      time.sleep(0.2) # Delay på 0.2s
+      sense.set_pixels(skull(b, yellow)) # gul skalle
+      time.sleep(0.2) # Delay på 0.2s
+
     # For-løkke for å printe poeng sum et siffer av gangen
     for number in range(0, len(StrScore)):   # for hvert siffer i poengsum
-        sense.show_letter(StrScore[number], back_colour=[194, 27, 209])  # Bruker show letter for 
-        time.sleep(0.4)  # Setter delay etter tall på 0.4s
-        sense.clear(194, 27, 209)  # Clearer ut forgie siffer
-        time.sleep(0.4) # Delay før neste siffer
-
+      sense.show_letter(StrScore[number], text_colour=b, back_colour=g)  # Bruker show letter for 
+      time.sleep(0.4)  # Setter delay etter tall på 0.4s
+      sense.clear(g)  # Clearer ut forgie siffer
+      time.sleep(0.4) # Delay før neste siffer
+   
     # Printer points til slutt med speed 0.04
-    sense.show_message("Points", scroll_speed=0.04, back_colour=[194, 27, 209])
+    sense.show_message("Points", scroll_speed=0.04, text_colour=b, back_colour=g)
     sense.clear()  # Clearer matrise
 
 
