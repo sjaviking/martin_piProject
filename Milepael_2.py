@@ -347,6 +347,7 @@ def main():
         if iterator % (GATE_FREQUENCY * GATE_SLOWNESS) == 0:
             gate_x_pos = get_gate_pos()
             gate_y_start = iterator
+            gate_already_taken == False
 
 
         #Legg gaten til i printebuffer
@@ -359,6 +360,7 @@ def main():
         if iterator % (FUEL_FREQUENCY * FUEL_SLOWNESS) == 1:
             fuel_x_pos = get_fuel_pos()
             fuel_y_start = iterator
+            fuel_already_taken == False
             
 
         #Legg fuel til i printebuffer
@@ -367,48 +369,36 @@ def main():
             buffer[fuel_y_pos][fuel_x_pos] = FUEL_COLOR
         
 
-        #Får inn buffer og fuel verdi, endrer buffer til å inneholde riktig fuelGauge
+        #Fuelnivået synker hver GATE_FREQUENCY*FUEL_DECREASE 'te gang
         if iterator % (GATE_FREQUENCY*FUEL_DECREASE) == 0:
-            fuel -= 1
+            if fuel_already_taken == False:
+                fuel -= 1
+
+
+        #Oppdaterer fuelbaren med verdi fra "fuel"
         buffer = draw_fuel(buffer, fuel)
-
-
-        #TODO: dette er koden for å få fuel på random posisjon, den er uferdig
-        #For "FUEL_SPAWN_CHANCE" prosent av linjene, legg en fuel til i "visible_fuel_list"
-        #if random.randint(1,100) < FUEL_SPAWN_CHANCE:
-        #    fuel_x_pos = get_fuel_pos()
-        #    fuel_y_start = iterator
-        #    visible_fuel_list.append([fuel_x_pos, fuel_y_start])
-
-
-        #Oppdaterer "visible_fuel_list" og fjerner fuel som har gått ut av banen
-        #visible_fuel_list = [[l[0], l[1] + 1] for l in visible_fuel_list]
-        
-
-
-        #For alle elementer i "visible_fuel_list", legg til fuel i bufferen
-        #gate_y_pos = abs(iterator - gate_y_start)
-        #buffer[gate_y_pos][gate_x_pos] = GATE_COLOR
-        #buffer[gate_y_pos][gate_x_pos + GATE_WIDTH] = GATE_COLOR
 
 
         #Når bilen passerer en gate, sjekk om du traff
         if CAR_Y_POS == gate_y_pos:
             if gate_x_pos <= car_x_pos <= gate_x_pos + GATE_WIDTH:
-                if car_x_pos == gate_x_pos + GATE_WIDTH // 2:
-                    score += 3
-                    print("Score + 3")
-                else:
-                    score += 1
-                    print("Score + 1")
+                if fuel_already_taken == False:
+                    if car_x_pos == gate_x_pos + GATE_WIDTH // 2:
+                        score += 3
+                        print("Score + 3")
+                    else:
+                        score += 1
+                        print("Score + 1")
 
-        #TODO: Legg til poengbar på den øverste linja på skjemren. Den skal vise
-        #      poeng du har som binærtall.
+                    #Denne variablen passer på at du ikke tar fuelen flere ganger
+                    fuel_already_taken = True
+
+
+        #Tegner poengbar i toppen av skjermen
         draw_score_bar(buffer, score)
 
 
         #Når bilen passerer en fuel, sjekk om du traff
-        #FIXME: Finn ut hvorfor poengbaren er fåkka
         if iterator > 1:
             if CAR_Y_POS == fuel_y_pos:
                 if fuel_x_pos == car_x_pos:
