@@ -1,6 +1,7 @@
 import random
 import time
 import os
+import subprocess
 import sys
 import threading
 
@@ -43,7 +44,7 @@ FPS = 20
 FRAME_DURATION = 1 / FPS
 
 FUEL_SPAWN_CHANCE = 2
-FUEL_DECREASE = 4
+FUEL_DECREASE = 23
 FUEL_FREQUENCY = 8
 FUEL_SLOWNESS = 3
 
@@ -117,13 +118,19 @@ def draw_fuel(mod_buffer, x):
 def draw_score_bar(buffer, score):
     """Tegner score på den øverste baren"""
     
-    SCORE_BAR_COLOR = (133, 133, 133)
-    SCORE_POINTS_COLOR = (133, 0, 255)
+    SCORE_BAR_COLOR = (34, 34, 34)
+    SCORE_POINTS_COLOR = (133, 255, 80)
     BAR_Y_POS = 0
-    BAR_LENGTH = 6
+    BAR_LENGTH = 7
 
     #Får "score" over til binærtall eks: 19 --> 10011
     binary_str_score = str(bin(score))[2:]
+
+    #Passer på at "binary_str_score" er BAR_LENGTH lang
+    leading_zeros = "0" * (BAR_LENGTH - len(binary_str_score)) 
+    binary_str_score = leading_zeros + binary_str_score
+
+    print("score: ", score, " bin: ", binary_str_score)
     
     #Legger til bakgrunnen
     for x in range(BAR_LENGTH):
@@ -336,9 +343,13 @@ def main():
     iterator = 0
     score = 0
     fuel = 8
+
+    #TODO: disse variablene burde reformateres bort/legges inn i while
     turn = 0
     visible_fuel_list = []
     car_x_pos = 4
+    fuel_already_taken = False
+    gate_already_taken = False
 
     #TODO: reformater koden slik at en kan endre level og dermed alle frekvenser
     #      automatisk.
@@ -356,7 +367,7 @@ def main():
     #Spillet starter
     if not DEBUG:
         intro_graphic()
-        os.system("mpg123" + MUSIC_FILE)
+        musicplayer = subprocess.Popen(["omxplayer", MUSIC_FILE])
 
     #Hovedloopen som kjører så lenge spillet varer
     while running:
@@ -386,7 +397,7 @@ def main():
         if iterator % (GATE_FREQUENCY * GATE_SLOWNESS) == 0:
             gate_x_pos = get_gate_pos()
             gate_y_start = iterator
-            gate_already_taken == False
+            gate_already_taken = False
 
 
         #Legg gaten til i printebuffer
@@ -399,17 +410,18 @@ def main():
         if iterator % (FUEL_FREQUENCY * FUEL_SLOWNESS) == 1:
             fuel_x_pos = get_fuel_pos()
             fuel_y_start = iterator
-            fuel_already_taken == False
+            fuel_already_taken = False
             
 
         #Legg fuel til i printebuffer
         if iterator > 1:
+            #TODO: fuel_already_taken gjør at fuel ikke blir printa
             fuel_y_pos = abs(iterator - fuel_y_start) // FUEL_SLOWNESS
             buffer[fuel_y_pos][fuel_x_pos] = FUEL_COLOR
         
 
-        #Fuelnivået synker hver GATE_FREQUENCY*FUEL_DECREASE 'te gang
-        if iterator % (GATE_FREQUENCY*FUEL_DECREASE) == 0:
+        #Fuelnivået synker hver FUEL_DECREASE 'te gang
+        if iterator % FUEL_DECREASE == 0:
             if fuel_already_taken == False:
                 fuel -= 1
 
@@ -421,16 +433,18 @@ def main():
         #Når bilen passerer en gate, sjekk om du traff
         if CAR_Y_POS == gate_y_pos:
             if gate_x_pos <= car_x_pos <= gate_x_pos + GATE_WIDTH:
-                if fuel_already_taken == False:
-                    if car_x_pos == gate_x_pos + GATE_WIDTH // 2:
-                        score += 3
-                        print("Score + 3")
-                    else:
-                        score += 1
-                        print("Score + 1")
+                if gate_already_taken == False:
+                    #FIXME: Denne koden har en bug der du får to poeng
+                    #       ila. én frame.
+                    #if car_x_pos == gate_x_pos + GATE_WIDTH // 2:
+                    #    score += 1
+                    #else:
+                    #    score += 1
 
-                    #Denne variablen passer på at du ikke tar fuelen flere ganger
-                    fuel_already_taken = True
+                    score += 1
+
+                    #Denne variablen passer på at du ikke tar porten flere ganger
+                    gate_already_taken = True
 
 
         #Tegner poengbar i toppen av skjermen
@@ -441,8 +455,12 @@ def main():
         if iterator > 1:
             if CAR_Y_POS == fuel_y_pos:
                 if fuel_x_pos == car_x_pos:
-                    fuel += 1
-                    #TODO: Blink fuelbaren når du treffer fuel
+                    if fuel_already_taken == False:
+                        fuel += 1
+                        #TODO: Blink fuelbaren når du treffer fuel
+
+                        #Denne variablen passer på at du ikke tar fuelen flere ganger
+                        fuel_already_taken = True
 
 
         #Om tanken blir full renner det over
