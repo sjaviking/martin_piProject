@@ -223,8 +223,8 @@ def game_over_graphic(score):
     sense.show_message("Game Over! Score:", scroll_speed=0.04, text_colour=[255, 0, 0], back_colour=[194, 27, 209])
     
     # For-løkke for å printe poeng sum et siffer av gangen
-    for number in range(0, len(StrScore))):   # for hvert siffer i poengsum
-        sense.show_letter(score[number], back_colour=[194, 27, 209])  # Bruker show letter for 
+    for number in range(0, len(StrScore)):   # for hvert siffer i poengsum
+        sense.show_letter(StrScore[number], back_colour=[194, 27, 209])  # Bruker show letter for 
         time.sleep(0.4)  # Setter delay etter tall på 0.4s
         sense.clear(194, 27, 209)  # Clearer ut forgie siffer
         time.sleep(0.4) # Delay før neste siffer
