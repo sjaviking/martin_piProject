@@ -5,6 +5,9 @@ import subprocess
 import sys
 import threading
 
+from sense_hat import SenseHat
+sense = SenseHat()
+
 
 """
 En liten visualisering på hvordan BUFFER fungerer
