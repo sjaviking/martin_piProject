@@ -5,8 +5,6 @@ import subprocess
 import sys
 import threading
 
-# Om du kjører koden lokalt kan du sette DEBUG til True.
-# -- printer til terminal i stedet for RPi sensehat
 
 """
 En liten visualisering på hvordan BUFFER fungerer
@@ -30,12 +28,6 @@ while i < 8:
     x_kordinater = BUFFER[i][7]
     i += 1
 """
-
-DEBUG = False
-
-if not DEBUG:
-    from sense_hat import SenseHat
-    sense = SenseHat()
 
 ROWS = 8
 COLS = 8
@@ -84,10 +76,12 @@ def get_gate_pos():
     gate_pos = random.randint(0, right_pole_max)
     return gate_pos
 
+
 def get_fuel_pos():
     """Returnerer x-posisjon til fuel som du skal treffe"""
     fuel_pos = random.randint(0, 6)
     return fuel_pos
+
 
 def draw_fuel(mod_buffer, x):
     """Mellom 0 og 8, 0 er null fuel, 8 er max fuel
@@ -365,9 +359,8 @@ def main():
 
 
     #Spillet starter
-    if not DEBUG:
-        intro_graphic()
-        musicplayer = subprocess.Popen(["omxplayer", MUSIC_FILE])
+    intro_graphic()
+    musicplayer = subprocess.Popen(["omxplayer", MUSIC_FILE])
 
     #Hovedloopen som kjører så lenge spillet varer
     while running:
@@ -376,17 +369,11 @@ def main():
 
 
         #Finn nye gyro-verdier for xyz
-        if not DEBUG:
-            imu_values = get_imu_values()
+        imu_values = get_imu_values()
 
 
         #Finn ut hvor bilen skal stå
-        if not DEBUG:
-            car_x_pos = calculate_car_position(imu_values)
-        else:
-            #TODO: legg inn keyboard-kontroller her så du kan 
-            # styre med piltastene på pc
-            car_x_pos = 3
+        car_x_pos = calculate_car_position(imu_values)
 
 
         #Legg bilen til i printebuffer
@@ -434,21 +421,15 @@ def main():
         if CAR_Y_POS == gate_y_pos:
             if gate_x_pos <= car_x_pos <= gate_x_pos + GATE_WIDTH:
                 if gate_already_taken == False:
-                    #FIXME: Denne koden har en bug der du får to poeng
-                    #       ila. én frame.
-                    #if car_x_pos == gate_x_pos + GATE_WIDTH // 2:
-                    #    score += 1
-                    #else:
-                    #    score += 1
-
+                    #Du traff en gate som ikke har blitt truffet før
                     score += 1
 
-                    #Denne variablen passer på at du ikke tar porten flere ganger
+                    #Denne variablen passer på at du ikke tar gaten flere ganger
                     gate_already_taken = True
 
 
         #Tegner poengbar i toppen av skjermen
-        draw_score_bar(buffer, score)
+        buffer = draw_score_bar(buffer, score)
 
 
         #Når bilen passerer en fuel, sjekk om du traff
@@ -456,7 +437,7 @@ def main():
             if CAR_Y_POS == fuel_y_pos:
                 if fuel_x_pos == car_x_pos:
                     if fuel_already_taken == False:
-                        fuel += 1
+                        fuel += 2
                         #TODO: Blink fuelbaren når du treffer fuel
 
                         #Denne variablen passer på at du ikke tar fuelen flere ganger
@@ -472,21 +453,17 @@ def main():
         iterator += 1
 
 
-        #Print banen
-        if DEBUG:
-            debug_print(buffer)
-        else:
-            #Får alt over på éi liste i stedet for ei liste av lister
-            flat_buffer = [element for sublist in buffer for element in sublist]
+        ### Printer det som står i buffer til skjermen
+        #Får alt over på éi liste i stedet for ei liste av lister
+        flat_buffer = [element for sublist in buffer for element in sublist]
 
-            #Printer til sensehat-skjermen
-            sense.set_pixels(flat_buffer)
+
+        #Printer til sensehat-skjermen
+        sense.set_pixels(flat_buffer)
 
 
         #Om du går tom for fuel er spillet over
         if fuel <= 0:
-            if DEBUG:
-                break
             #TODO: Add Midjo som gråter når du går tom for fuel.
             game_over_graphic(score)
             running = False
