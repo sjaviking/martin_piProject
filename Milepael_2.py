@@ -139,6 +139,92 @@ def draw_score_bar(buffer, score):
     return buffer
 
 
+def draw_sad_midjo(animation_length):
+    """Tegner en animasjon av Midjo som gråter"""
+
+    midjo_portrait = [
+        (255,	255,	255),
+        (255,	255,	255),
+        (254,	254,	254),
+        (201,	195,	193),
+        (166,	151,	148),
+        (203,	194,	193),
+        (252,	251,	251),
+        (255,	255,	255),
+        (255,	255,	255),
+        (255,	255,	255),
+        (210,	206,	204),
+        (151,	107,	97),
+        (205,	154,	146),
+        (218,	169,	162),
+        (209,	193,	190),
+        (255,	255,	255),
+        (255,	255,	255),
+        (255,	255,	255),
+        (178,	169,	166),
+        (175,	122,	111),
+        (236,	185,	177),
+        (242,	197,	191),
+        (215,	185,	178),
+        (255,	255,	255),
+        (255,	255,	255),
+        (255,	255,	255),
+        (144,	122,	115),
+        (157,	114,	106),
+        (210,	157,	145),
+        (214,	163,	152),
+        (217,	180,	172),
+        (255,	255,	255),
+        (255,	255,	255),
+        (255,	255,	255),
+        (171,	158,	155),
+        (201,	136,	127),
+        (194,	135,	128),
+        (229,	167,	160),
+        (233,	199,	192),
+        (255,	255,	255),
+        (255,	255,	255),
+        (251,	251,	250),
+        (141,	132,	132),
+        (155,	103,	93),
+        (152,	97, 	93),
+        (184,	124,	114),
+        (236,	223,	221),
+        (255,	255,	255),
+        (210,	205,	201),
+        (117,	102,	97),
+        (43, 	36,		44),
+        (130,	92,		81),
+        (170,	115,	107),
+        (180,	132,	125),
+        (199,	188,	183),
+        (244,	242,	240),
+        (107,	78,		64),
+        (97, 	68,		55),
+        (63, 	42,		33),
+        (46, 	34,		37),
+        (106,	80,		77),
+        (78,  71, 	90),
+        (109,	78, 	64),
+        (118,	87, 	72)]
+
+    buffer = midjo_portrait
+    tear_color = (0, 0, 80)
+          
+    sense.set_pixels(midjo_portrait)
+    for frame in range(animation_length):
+        #tear 1
+        for i in range(3):
+            sense.set_pixel(3, 3+i, tear_color)
+            sleep(0.1)
+        
+        #tear 2
+        for j in range(3):
+            sense.set_pixel(5, 3+j, tear_color)
+            sleep(0.1)
+        sense.set_pixels(midjo_portrait)
+
+
 def intro_graphic():
     TheGame = 'Midjo GP'  # Spillets navn
     TheGame_odd = TheGame[::2] # Skiller ut odde karakterer
@@ -500,6 +586,7 @@ def main():
         if fuel <= 0:
             #TODO: Add Midjo som gråter når du går tom for fuel.
             game_over_graphic(score)
+            draw_sad_midjo(8)
             running = False
         
 
