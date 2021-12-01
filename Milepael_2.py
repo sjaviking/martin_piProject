@@ -344,6 +344,8 @@ def calculate_car_position(gyro):
     if gyro >= 180:
         gyro = - abs(360 - gyro)
 
+    #passer på at bilen ikke går utenfor skjermen
+    gyro = restrict_value(gyro, 0, 6)
     #Endre bilposisjon
     return -(gyro // 10) + 3
 
