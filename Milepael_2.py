@@ -139,30 +139,69 @@ def draw_score_bar(buffer, score):
 
 
 def intro_graphic():
-    sense.low_light = True  # Bruker lavlysmodus
-    TheGame = 'Midjo GP 1970'  # Spillets navn
+    TheGame = 'Midjo GP'  # Spillets navn
     TheGame_odd = TheGame[::2] # Skiller ut odde karakterer
     TheGame_even = TheGame[1::2] # Skiller ut jevne karakterer
 
-    # Printer tekst med scroll spedd 0.04s, sort tekst og faget bakgunn
-    sense.show_message('Welcome to', scroll_speed=0.04, text_colour=[0,0,0], back_colour=[194, 27, 209])
+    g = (96, 125, 139)  # Gråfarge til bakgrunn
+    w = (10, 10, 10)   # Hvit farge til bokstav
+    r = (244, 66, 54)  # Rød farge til bokstav
 
-    sense.low_ligh = False  # fjerner lowlight for intens avduking av spillets navn
+    Background = []  # Tom liste som fylles av forløkke for bakgrunn
+    # For løkke for å lage bakgrunn
+    for color in range(0,64): # range 64 grunnet 64 pixler
+        Background.append(g)
+
+
+    # Første bilde med 1 bokstav
+    Midjo = [w, g, g, g, w, g, g, g,
+             w, w, g, w, w, g, g, g,
+             w, g, w, g, w, g, g, g,
+             w, g, g, g, w, g, g, g,
+             w, g, g, g, g, g, g, g,
+             g, g, g, g, g, g, g, g,
+             g, g, g, g, g, g, g, g,
+             g, g, g, g, g, g, g, g,]
+
+    # Andre bilde med 2 bosktaver
+    Grand = [w, g, g, g, w, g, g, g,
+             w, w, g, w, w, g, g, g,
+             w, g, w, g, w, g, g, g,
+             w, g, g, g, w, g, g, g,
+             w, r, r, g, g, g, g, g,
+             r, g, g, g, g, g, g, g,
+             r, g, r, r, g, g, g, g,
+             g, r, r, g, g, g, g, g,] 
+
+    # Tredje bilde med 3 bokstaver
+    Prix = [w, g, g, g, w, g, g, g,
+            w, w, g, w, w, g, g, g,
+            w, g, w, g, w, g, g, g,
+            w, g, g, g, w, g, g, g,
+            w, r, r, g, g, r, r, g,
+            r, g, g, g, g, r, g, r,
+            r, g, r, r, g, r, r, g,
+            g, r, r, g, g, r, g, g,]
+
+    sense.set_pixels(Background)
+    time.sleep(1)
+    sense.set_pixels(Midjo)
+    time.sleep(1)
+    sense.set_pixels(Grand)
+    time.sleep(1)
+    sense.set_pixels(Prix)
+    time.sleep(1)
+  
     # for løkke for å stave spillnavn meg generel lengde på spillets navn. Dette selv om variablene er kortere
     for character in range(0, len(TheGame)):
-  
-        if character < len(TheGame_odd):  # Printer kun hvis charakter er innen range til odd variabel
-            # Printer hver odde bokstav meg tekst hvit og sort bakgrunn
-            sense.show_letter(TheGame_odd[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
-            time.sleep(0.4)  # Delay på 0.4s
-        if character < len(TheGame_even): # Printer kun hvis charakter er innen range til even variabel
-            # Printer hver partall bokstav med hvit bakrunn og sort tekst
-            sense.show_letter(TheGame_even[character], text_colour=[0,0,0], back_colour=[255, 255, 255])
-            time.sleep(0.4)  # Delay på 0.4s
-    sense.low_light = True # Setter tilbake til lowlight igjen
-
-    # Viser teskt med scroll speed 0.04 og farget bakgrunn
-    sense.show_message('Pitch to control', scroll_speed=0.04, text_colour=[0,0,0], back_colour=[194, 27, 209])
+      if character < len(TheGame_odd):  # Printer kun hvis charakter er innen range til odd variabel
+        # Printer hver odde bokstav meg tekst hvit og sort bakgrunn
+        sense.show_letter(TheGame_odd[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
+        time.sleep(0.4)  # Delay på 0.4s
+      if character < len(TheGame_even): # Printer kun hvis charakter er innen range til even variabel
+        # Printer hver partall bokstav med hvit bakrunn og sort tekst
+        sense.show_letter(TheGame_even[character], text_colour=[0,0,0], back_colour=[255, 255, 255])
+        time.sleep(0.4)  # Delay på 0.4s
     sense.clear()  # Tømmer led-matrise
 
 
