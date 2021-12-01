@@ -114,6 +114,30 @@ def draw_fuel(mod_buffer, x):
     return mod_buffer #returnerer en modifisert buffer
 
 
+def draw_score_bar(buffer, score):
+    """Tegner score på den øverste baren"""
+    
+    SCORE_BAR_COLOR = (133, 133, 133)
+    SCORE_POINTS_COLOR = (133, 0, 255)
+    BAR_Y_POS = 0
+    BAR_LENGTH = 6
+
+    #Får "score" over til binærtall eks: 19 --> 10011
+    binary_str_score = str(bin(score))[2:]
+    
+    #Legger til bakgrunnen
+    for x in range(BAR_LENGTH):
+        buffer[BAR_Y_POS][x] = SCORE_BAR_COLOR
+
+    #Legger til prikker for score
+    for x_pos, char in enumerate(binary_str_score):
+        if char == "1":
+            buffer[BAR_Y_POS][x_pos] = SCORE_POINTS_COLOR
+
+    #Returnerer den modifiserte bufferen
+    return buffer
+
+
 def intro_graphic():
     sense.low_light = True  # Bruker lavlysmodus
     TheGame = 'Midjo GP 1970'  # Spillets navn
@@ -380,6 +404,7 @@ def main():
 
         #TODO: Legg til poengbar på den øverste linja på skjemren. Den skal vise
         #      poeng du har som binærtall.
+        draw_score_bar(buffer, score)
 
 
         #Når bilen passerer en fuel, sjekk om du traff
