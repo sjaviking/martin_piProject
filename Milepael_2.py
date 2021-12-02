@@ -662,6 +662,10 @@ def main():
             score = 0
             total_score = 0
             fuel = 8
+            level = 1
+
+            musicplayer = subprocess.Popen(["omxplayer", ENGINE_SOUND])
+            next_level_graphic(level)
 
         
         #Sjekk om du har nok poeng til å gå til neste nivå
