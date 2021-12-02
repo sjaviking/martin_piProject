@@ -690,6 +690,8 @@ def main():
                 total_score = 0
                 fuel = 8
                 level = 1
+                musicplayer = subprocess.Popen(["omxplayer", ENGINE_SOUND])
+                next_level_graphic(level)
 
 
         #Delay
