@@ -53,7 +53,14 @@ FUEL_COLOR = (120, 255, 0)
 GATE_COLOR = (255, 0, 0)
 NOCOLOR = (0, 0, 0)
 
-MUSIC_FILE = "soundtrack_mgp.wav"
+THEME_SONG =         "sound/midjo_gp_main.wav"
+CRASH_SOUND =        "sound/crash_midjo_gp.wav"
+PICKUP_FUEL_SOUND =  "sound/fuel_midjo_gp.wav"
+LOW_FUEL_SOUND =     "sound/low_fuel_midjo_gp.wav"
+SCORE_SOUND =        "sound/point_fuel_midjo_gp.wav"
+GAME_OVER_SOUND =    "sound/game_over_midjo_gp.wav"
+#TODO: Finn en ordentlig måte å spille av lyd på.
+#      Akkurat nå fortsetter lyden å spille etter python-programmet har stoppa.
 
 
 def restrict_value(value, min_value, max_value):
@@ -474,7 +481,7 @@ def main():
 
     #Spillet starter
     intro_graphic()
-    musicplayer = subprocess.Popen(["omxplayer", MUSIC_FILE])
+    musicplayer = subprocess.Popen(["omxplayer", THEME_SONG])
 
     #Hovedloopen som kjører så lenge spillet varer
     while running:
