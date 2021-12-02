@@ -297,18 +297,21 @@ def intro_graphic():
     # Setter så siste bokstav i bildet
     sense.set_pixels(Prix(g, r, w))
     time.sleep(1) # Delay på 1s
+    
+    # Finner string som er lengst av odd og even for å sette lengde på for-løkke
+    if len(TheGame_odd) > len(TheGame_even):
+      StrLenght = len(TheGame_odd)
+    else: StrLenght = len(TheGame_even)
 
     # for løkke for å stave spillnavn meg generel lengde på spillets navn.
     # Bruker if setning, for å unngå lengde error på stringer 
-    for character in range(0, len(TheGame)): # Løkken kjører like lenge som spillets navn.
-      if character < len(TheGame_odd):  # Printer kun hvis charakter er innen range til odd variabel
-        # Printer hver odde bokstav meg tekst hvit og sort bakgrunn
-        sense.show_letter(TheGame_odd[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
-        time.sleep(0.4)  # Delay på 0.4s
-      if character < len(TheGame_even): # Printer kun hvis charakter er innen range til even variabel
-        # Printer hver partall bokstav med hvit bakrunn og sort tekst
-        sense.show_letter(TheGame_even[character], text_colour=[0,0,0], back_colour=[255, 255, 255])
-        time.sleep(0.4)  # Delay på 0.4s
+    for character in range(0, StrLenght): # Løkken kjører like lenge som spillets navn.
+      # Printer hver odde bokstav meg tekst hvit og sort bakgrunn
+      sense.show_letter(TheGame_odd[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
+      time.sleep(0.4)  # Delay på 0.4s
+      # Printer hver partall bokstav med hvit bakrunn og sort tekst
+      sense.show_letter(TheGame_even[character], text_colour=[0,0,0], back_colour=[255, 255, 255])
+      time.sleep(0.4)  # Delay på 0.4s
     sense.clear()  # Tømmer led-matrise
 
 
