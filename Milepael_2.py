@@ -420,7 +420,7 @@ def game_over_graphic(score):
     sense.clear()  # Clearer matrise
 
     
-def winner():
+def winner_graphic():
     # konstanter for farger
     b = (0,0,0)  # Sort farge for bakgrunn
     g = (96, 125, 139) # Gråfarge for skrift på pokal
@@ -655,7 +655,7 @@ def main():
 
             if level > 3:
                 #Du har runna spillet
-                #TODO: Print grafikk når du vinner
+                winner_graphic()
                 pass
 
 
