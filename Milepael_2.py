@@ -318,6 +318,10 @@ def intro_graphic():
 
 
 def next_level_graphic(level):
+    #Spiller av motorlyd
+    musicplayer = subprocess.Popen(["omxplayer", ENGINE_SOUND])
+
+    #Farger
     W = (255, 255, 255)
     B = (0, 0, 0)
     r = (255, 0, 0)
@@ -664,14 +668,11 @@ def main():
             fuel = 8
             level = 1
 
-            musicplayer = subprocess.Popen(["omxplayer", ENGINE_SOUND])
             next_level_graphic(level)
 
         
         #Sjekk om du har nok poeng til å gå til neste nivå
         if score >= level_score_requirement:
-            musicplayer = subprocess.Popen(["omxplayer", ENGINE_SOUND])
-
             #Inkrementerer nivåvariablen
             level += 1
 
@@ -695,7 +696,6 @@ def main():
                 total_score = 0
                 fuel = 8
                 level = 1
-                musicplayer = subprocess.Popen(["omxplayer", ENGINE_SOUND])
                 next_level_graphic(level)
 
 
