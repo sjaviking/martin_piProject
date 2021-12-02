@@ -443,9 +443,9 @@ def winner_graphic():
       return drawing
              
     sense.set_pixels(cup(bronze)) # Setter bronsefarge på pokal
-    time.sleep(0.5) # Delay på 0.5s
+    time.sleep(1.0) # Delay på 0.5s
     sense.set_pixels(cup(silver)) # Setter sølvarge på pokal
-    time.sleep(0.5) # delay på 0.5s
+    time.sleep(1.0) # delay på 0.5s
     sense.set_pixels(cup(gold)) # Setter gullfarge på pokal
     time.sleep(1.0) # Dealy på 1s før program kjører videre
 
