@@ -305,10 +305,7 @@ def intro_graphic():
     sense.clear()  # Tømmer led-matrise
 
 
-def nextLevel():
-    # Sier hvilket Level vi befinner oss i
-    Lvl = 3
-    
+def next_level_graphic(level):
     W = (255, 255, 255)
     B = (0, 0, 0)
     r = (255, 0, 0)
@@ -368,12 +365,12 @@ def nextLevel():
         }
       
     # Level må indekseres i levelPixelRange  
-    if Lvl == 0 or Lvl > 3:
+    if level == 0 or level > 3:
         raise ValueError("Level must be 1, 2 or 3")
       
     # Printer ut meldingen av hvilket level vi befinner oss i, 
     # og alle nivåene på speedometeret
-    print_speedometer("Lvl " + str(Lvl) , levelPixelRange[Lvl])
+    print_speedometer("Lvl " + str(level) , levelPixelRange[level])
         
     sleep(1)
     
@@ -598,17 +595,31 @@ def main():
 
         #Om du går tom for fuel er spillet over
         if fuel <= 0:
-            #TODO: Add Midjo som gråter når du går tom for fuel.
             game_over_graphic(score)
             draw_sad_midjo(8)
+            #TODO: Legg til scoreboard som leser fra en fil "hiscore.txt" og
+            #      printer de beste scorene i synkende rekkefølge til skjermen
+            #      vha. "draw_score_bar()". Dersom du har en hiscore vil det
+            #      blinke en rød piksel ved siden av scoren din, og den blir
+            #      lagt til i fila.
+
+            #TODO: Restart vha. joystick
             running = False
 
         
         #Sjekk om du har nok poeng til å gå til neste nivå
         if score >= level_score_requirement:
-            #TODO: nå neste nivå
-            pass
-        
+            #Inkrementerer nivåvariablen
+            level += 1
+
+            #Print grafikk for neste level
+            next_level_graphic(level)
+
+            if level > 3:
+                #Du har runna spillet
+                #TODO: Print grafikk når du vinner
+                pass
+
 
         #Delay
         time.sleep(frame_duration)
