@@ -57,7 +57,7 @@ THEME_SONG =         "sound/midjo_gp_main.wav"
 CRASH_SOUND =        "sound/crash_midjo_gp.wav"
 PICKUP_FUEL_SOUND =  "sound/fuel_midjo_gp.wav"
 LOW_FUEL_SOUND =     "sound/low_fuel_midjo_gp.wav"
-SCORE_SOUND =        "sound/point_fuel_midjo_gp.wav"
+SCORE_SOUND =        "sound/point_midjo_gp.wav"
 GAME_OVER_SOUND =    "sound/game_over_midjo_gp.wav"
 #TODO: Finn en ordentlig måte å spille av lyd på.
 #      Akkurat nå fortsetter lyden å spille etter python-programmet har stoppa.
