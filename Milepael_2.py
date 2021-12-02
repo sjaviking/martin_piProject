@@ -319,7 +319,7 @@ def intro_graphic():
 
 def next_level_graphic(level):
     #Spiller av motorlyd
-    engine_sound = subprocess.Popen(["omxplayer", ENGINE_SOUND])
+    engine_sound = subprocess.Popen(["aplay", ENGINE_SOUND])
 
     #Farger
     W = (255, 255, 255)
@@ -598,7 +598,7 @@ def main():
         #Dersom du har 2 eller færre fuel, spill av alarmlyd
         if fuel <= 2:
             if low_fuel_alarm == False:
-                low_fuel_sound = subprocess.Popen(["omxplayer", LOW_FUEL_SOUND])
+                low_fuel_sound = subprocess.Popen(["aplay", LOW_FUEL_SOUND])
                 low_fuel_alarm = True
 
         #Dersom alarmen er på men du har fler enn 2 fuel, skru den av
@@ -617,7 +617,7 @@ def main():
                 if gate_already_taken == False:
                     #Du traff en gate som ikke har blitt truffet før
                     score += 1
-                    score_sound = subprocess.Popen(["omxplayer", SCORE_SOUND])
+                    score_sound = subprocess.Popen(["aplay", SCORE_SOUND])
 
                     #Denne variablen passer på at du ikke tar gaten flere ganger
                     gate_already_taken = True
@@ -633,7 +633,7 @@ def main():
                 if fuel_x_pos == car_x_pos:
                     if fuel_already_taken == False:
                         fuel += 2
-                        pickup_fuel_sound = subprocess.Popen(["omxplayer", PICKUP_FUEL_SOUND])
+                        pickup_fuel_sound = subprocess.Popen(["aplay", PICKUP_FUEL_SOUND])
 
                         #Denne variablen passer på at du ikke tar fuelen flere ganger
                         fuel_already_taken = True
@@ -661,7 +661,7 @@ def main():
         if fuel <= 0:
             #Avslutter "theme_song" og spiller av game over
             theme_song.kill()
-            game_over_sound = subprocess.Popen(["omxplayer", GAME_OVER_SOUND])
+            game_over_sound = subprocess.Popen(["aplay", GAME_OVER_SOUND])
             game_over_graphic(score)
             draw_sad_midjo(8)
 
