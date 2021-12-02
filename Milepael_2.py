@@ -76,11 +76,11 @@ def move_car(change):
     move_car_to(restrict_value(car_x_pos + change, 0, COLS - 1))
 
 
-def get_gate_pos():
+def get_gate_pos(gate_width):
     """Returner x-posisjon til gate som du skal treffe med bilen"""
     #Bredden til banen er COLS minus bredden til fuel-baren
     game_width = COLS - 2
-    right_pole_max = game_width - GATE_WIDTH
+    right_pole_max = game_width - gate_width
 
     gate_pos = random.randint(0, right_pole_max)
     return gate_pos
@@ -521,7 +521,7 @@ def main():
 
         #Etter "GATE_FREQUENCY" iterasjoner, lag en ny gate
         if iterator % (GATE_FREQUENCY * GATE_SLOWNESS) == 0:
-            gate_x_pos = get_gate_pos()
+            gate_x_pos = get_gate_pos(gate_width)
             gate_y_start = iterator
             gate_already_taken = False
 
