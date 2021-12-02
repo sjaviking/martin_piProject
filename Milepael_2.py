@@ -419,6 +419,36 @@ def game_over_graphic(score):
     sense.show_message("Points", scroll_speed=0.04, text_colour=b, back_colour=g)
     sense.clear()  # Clearer matrise
 
+    
+def winner():
+    # konstanter for farger
+    b = (0,0,0)  # Sort farge for bakgrunn
+    g = (96, 125, 139) # Gråfarge for skrift på pokal
+    y = (255, 235, 59)  # Gul farge for skygge på pokal
+    gold = (255, 193, 7)  # Gull farge for pokal
+    silver = (158, 158, 158) # Sølvfarge for pokal
+    bronze = (176, 141, 87) # Bronsefarge for pokal
+
+
+    # Bruker definisjon for å kunne endre farge på pokalen uten å
+    # Måtte ha flere ulike lister
+    def cup(x):  # X er den fargen vi ønsker å bytte
+      drawing = [b, x, x, x, x, x, x, b,
+                 x, y, x, x, g, x ,y, x,
+                 x, y, x, g, g, x, y, x,
+                 x, y, x, x, g, x, y, x,
+                 b, x, x, x, g, x, x, b,
+                 b, b, x, x, g, x, b, b,
+                 b, b, b, x, x, b, b, b,
+                 b, b, x, x, x, x, b, b,]
+      return drawing
+             
+    sense.set_pixels(cup(bronze)) # Setter bronsefarge på pokal
+    time.sleep(0.5) # Delay på 0.5s
+    sense.set_pixels(cup(silver)) # Setter sølvarge på pokal
+    time.sleep(0.5) # delay på 0.5s
+    sense.set_pixels(cup(gold)) # Setter gullfarge på pokal
+    time.sleep(1.0) # Dealy på 1s før program kjører videre
 
 def get_imu_values():
     """Få xyz-verdi"""
