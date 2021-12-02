@@ -225,12 +225,12 @@ def draw_sad_midjo(animation_length):
         #tear 1
         for i in range(3):
             sense.set_pixel(3, 3+i, tear_color)
-            sleep(0.1)
+            time.sleep(0.1)
         
         #tear 2
         for j in range(3):
             sense.set_pixel(5, 3+j, tear_color)
-            sleep(0.1)
+            time.sleep(0.1)
         sense.set_pixels(midjo_portrait)
 
 
@@ -358,7 +358,7 @@ def next_level_graphic(level):
         # helt til den når siste nivå for angitt level 
         sense.clear()
         sense.set_pixels(pixels)
-        sleep(0.4)
+        time.sleep(0.4)
   
     # Hastigheten på teksten som printes        
     speed = 0.04
@@ -372,14 +372,14 @@ def next_level_graphic(level):
         }
       
     # Level må indekseres i levelPixelRange  
-    if level == 0 or level > 3:
+    if level == 0 or level >= 3:
         raise ValueError("Level must be 1, 2 or 3")
       
     # Printer ut meldingen av hvilket level vi befinner oss i, 
     # og alle nivåene på speedometeret
     print_speedometer("Lvl " + str(level) , levelPixelRange[level])
         
-    sleep(1)
+    time.sleep(1)
     
 
 def game_over_graphic(score):
@@ -481,6 +481,7 @@ def main():
 
     #Spillet starter
     intro_graphic()
+    next_level_graphic(1)
     musicplayer = subprocess.Popen(["omxplayer", THEME_SONG])
 
     #Hovedloopen som kjører så lenge spillet varer
