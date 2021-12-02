@@ -656,6 +656,11 @@ def main():
             #Venter på at spilleren skal trykke på joystick
             wait_for_joystick_released()
 
+            #Reset score, total_score og fuel
+            score = 0
+            total_score = 0
+            fuel = 8
+
         
         #Sjekk om du har nok poeng til å gå til neste nivå
         if score >= level_score_requirement:
@@ -676,6 +681,11 @@ def main():
 
                 #Venter på at spilleren skal trykke på joystick
                 wait_for_joystick_released()
+
+                #Reset score, total_score og fuel
+                score = 0
+                total_score = 0
+                fuel = 8
 
 
         #Delay
