@@ -371,10 +371,6 @@ def next_level_graphic(level):
         3: 7,
         }
       
-    # Level må indekseres i levelPixelRange  
-    if level == 0 or level >= 3:
-        raise ValueError("Level must be 1, 2 or 3")
-      
     # Printer ut meldingen av hvilket level vi befinner oss i, 
     # og alle nivåene på speedometeret
     print_speedometer("Lvl " + str(level) , levelPixelRange[level])
@@ -511,7 +507,7 @@ def main():
 
     #Spillet starter
     intro_graphic()
-    next_level_graphic(1)
+    next_level_graphic(level)
     musicplayer = subprocess.Popen(["omxplayer", THEME_SONG])
 
     #Hovedloopen som kjører så lenge spillet varer
@@ -582,8 +578,8 @@ def main():
                 fuel -= 1
 
                 if fuel <= 2:
-                    musicplayer = subprocess.Popen(["omxplayer", LOW_FUEL_SOUND])
-
+                    #FIXME: stopp lyden dersom du øker fuel til over 2
+                    low_fuel_sound = subprocess.Popen(["omxplayer", LOW_FUEL_SOUND])
 
 
         #Oppdaterer fuelbaren med verdi fra "fuel"
