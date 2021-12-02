@@ -59,6 +59,7 @@ PICKUP_FUEL_SOUND =  "sound/fuel_midjo_gp.wav"
 LOW_FUEL_SOUND =     "sound/low_fuel_midjo_gp.wav"
 SCORE_SOUND =        "sound/point_midjo_gp.wav"
 GAME_OVER_SOUND =    "sound/game_over_midjo_gp.wav"
+ENGINE_SOUND =       "sound/engine_sound.wav"
 #TODO: Finn en ordentlig måte å spille av lyd på.
 #      Akkurat nå fortsetter lyden å spille etter python-programmet har stoppa.
 
@@ -664,6 +665,8 @@ def main():
         
         #Sjekk om du har nok poeng til å gå til neste nivå
         if score >= level_score_requirement:
+            musicplayer = subprocess.Popen(["omxplayer", ENGINE_SOUND])
+
             #Inkrementerer nivåvariablen
             level += 1
 
@@ -686,6 +689,7 @@ def main():
                 score = 0
                 total_score = 0
                 fuel = 8
+                level = 1
 
 
         #Delay
