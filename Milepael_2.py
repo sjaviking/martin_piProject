@@ -44,7 +44,6 @@ FUEL_FREQUENCY = 8
 FUEL_SLOWNESS = 3
 
 GATE_FREQUENCY = 8
-GATE_WIDTH = 2
 GATE_SLOWNESS = 4
 
 CAR_Y_POS = 6
@@ -470,15 +469,10 @@ def main():
 
     #TODO: reformater koden slik at en kan endre level og dermed alle frekvenser
     #      automatisk.
+    
 
-
-    #TODO: Endre flyten i spillet slik at det er levler.
-    # lvl 1 --> 32
-    #   speedometer-gfx
-    # lvl 2 --> 64
-    #   speedometer-gfx
-    # lvl 3 --> evig
-
+    #Spillet starter på nivå 1, så inkrementerer når du når det neste nivået
+    level = 1
 
 
     #Spillet starter
@@ -489,6 +483,23 @@ def main():
     while running:
         #Lager ny buffer (som til slutt skal printes til skjermen)
         buffer = [[NOCOLOR for x in range(COLS)] for y in range(ROWS)]
+
+
+        #Oppdaterer konstanter i forhold til "level"
+        if level == 1:
+            gate_width = 4
+            frame_duration = FRAME_DURATION
+            level_score_requirement = 32
+
+        if level == 2:
+            gate_width = 3
+            frame_duration = FRAME_DURATION
+            level_score_requirement = 64
+
+        if level == 3:
+            gate_width = 3
+            frame_duration = 1/50
+            level_score_requirement = 127
 
 
         #Finn nye gyro-verdier for xyz
@@ -513,7 +524,7 @@ def main():
         #Legg gaten til i printebuffer
         gate_y_pos = abs(iterator - gate_y_start) // GATE_SLOWNESS
         buffer[gate_y_pos][gate_x_pos] = GATE_COLOR                 #Venstre påle
-        buffer[gate_y_pos][gate_x_pos + GATE_WIDTH] = GATE_COLOR    #Høyre påle
+        buffer[gate_y_pos][gate_x_pos + gate_width] = GATE_COLOR    #Høyre påle
 
 
         #Etter "FUEL_FREQUENCY" iterasjoner, lag en ny gate
@@ -542,7 +553,7 @@ def main():
 
         #Når bilen passerer en gate, sjekk om du traff
         if CAR_Y_POS == gate_y_pos:
-            if gate_x_pos <= car_x_pos <= gate_x_pos + GATE_WIDTH:
+            if gate_x_pos <= car_x_pos <= gate_x_pos + gate_width:
                 if gate_already_taken == False:
                     #Du traff en gate som ikke har blitt truffet før
                     score += 1
@@ -591,10 +602,16 @@ def main():
             game_over_graphic(score)
             draw_sad_midjo(8)
             running = False
+
+        
+        #Sjekk om du har nok poeng til å gå til neste nivå
+        if score >= level_score_requirement:
+            #TODO: nå neste nivå
+            pass
         
 
         #Delay
-        time.sleep(FRAME_DURATION)
+        time.sleep(frame_duration)
 
 
 def host_websocket():
