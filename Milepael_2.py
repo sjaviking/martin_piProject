@@ -524,17 +524,17 @@ def main():
         if level == 1:
             gate_width = 4
             frame_duration = FRAME_DURATION
-            level_score_requirement = 32
+            level_score_requirement = 16
 
         if level == 2:
             gate_width = 3
             frame_duration = FRAME_DURATION
-            level_score_requirement = 64
+            level_score_requirement = 32
 
         if level == 3:
             gate_width = 3
             frame_duration = 1/50
-            level_score_requirement = 127
+            level_score_requirement = 32
 
 
         #Finn nye gyro-verdier for xyz
