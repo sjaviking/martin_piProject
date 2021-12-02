@@ -473,6 +473,12 @@ def calculate_car_position(gyro):
     return gyro
 
 
+def wait_for_joystick_released():
+    event = sense.stick.wait_for_event(emptybuffer=True)
+    if event.action == "released":
+        print("SPILLET RESTARTER")
+
+
 def debug_print(buffer):
     os.system("clear")
     for line in buffer:
@@ -647,8 +653,8 @@ def main():
             #      blinke en rød piksel ved siden av scoren din, og den blir
             #      lagt til i fila.
 
-            #TODO: Restart vha. joystick
-            running = False
+            #Venter på at spilleren skal trykke på joystick
+            wait_for_joystick_released()
 
         
         #Sjekk om du har nok poeng til å gå til neste nivå
@@ -667,6 +673,9 @@ def main():
             if level > 3:
                 #Du har runna spillet
                 winner_graphic()
+
+                #Venter på at spilleren skal trykke på joystick
+                wait_for_joystick_released()
 
 
         #Delay
