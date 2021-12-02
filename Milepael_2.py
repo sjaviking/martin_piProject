@@ -351,8 +351,8 @@ def next_level_graphic(level):
         # hvilket speedometer nivå som vises
         pixels = [v for v in speedometer]
         for (start, end) in color_ranges[index]:
-          for i in range(start, end):
-            pixels[i] = r
+            for i in range(start, end):
+                pixels[i] = r
         
         # Clearer og printer ut speedometeret for hvert nivå,
         # helt til den når siste nivå for angitt level 
@@ -488,6 +488,7 @@ def main():
     running = True
     iterator = 0
     score = 0
+    total_score = 0
     fuel = 8
 
     #TODO: disse variablene burde reformateres bort/legges inn i while
@@ -652,13 +653,17 @@ def main():
             #Inkrementerer nivåvariablen
             level += 1
 
+            #Nullstiller score
+            total_score += score
+            score = 0
+
             #Print grafikk for neste level
-            next_level_graphic(level)
+            if level <= 3:
+                next_level_graphic(level)
 
             if level > 3:
                 #Du har runna spillet
                 winner_graphic()
-                pass
 
 
         #Delay
