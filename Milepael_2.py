@@ -307,12 +307,13 @@ def intro_graphic():
     # for løkke for å stave spillnavn meg generel lengde på spillets navn.
     # Bruker if setning, for å unngå lengde error på stringer 
     for character in range(0, StrLenght): # Løkken kjører like lenge som spillets navn.
-      # Printer hver odde bokstav meg tekst hvit og sort bakgrunn
-      sense.show_letter(TheGame_odd[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
-      time.sleep(0.4)  # Delay på 0.4s
-      # Printer hver partall bokstav med hvit bakrunn og sort tekst
-      sense.show_letter(TheGame_even[character], text_colour=[0,0,0], back_colour=[255, 255, 255])
-      time.sleep(0.4)  # Delay på 0.4s
+      if StrLenght >= len(TheGame_odd): # Sjekker lengde opp mot telleverk for å ikke få index error 
+        sense.show_letter(TheGame_odd[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
+        time.sleep(0.4)  # Delay på 0.4s
+      if StrLenght >= len(TheGame_even): # Sjekker lengde opp mot telleverk for å ikke få index error
+        # Printer hver partall bokstav med hvit bakrunn og sort tekst
+        sense.show_letter(TheGame_even[character], text_colour=[0,0,0], back_colour=[255, 255, 255])
+        time.sleep(0.4)  # Delay på 0.4s
     sense.clear()  # Tømmer led-matrise
 
 
