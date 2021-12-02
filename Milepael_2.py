@@ -214,7 +214,7 @@ def draw_sad_midjo(animation_length):
         (63, 	42,		33),
         (46, 	34,		37),
         (106,	80,		77),
-        (78,  71, 	90),
+        (78,    71,     90),
         (109,	78, 	64),
         (118,	87, 	72)]
 
@@ -247,12 +247,12 @@ def intro_graphic():
     Background = []  # Tom liste som fylles av forløkke for bakgrunn
     # For løkke for å lage bakgrunn
     for color in range(0,64): # range 64 grunnet 64 pixler
-      Background.append(g)
+        Background.append(g)
 
 
     # Første bilde med 1 bokstav
     def Midjo(g, w):
-      drawing = [w, g, g, g, w, g, g, g,
+        drawing = [w, g, g, g, w, g, g, g,
                  w, w, g, w, w, g, g, g,
                  w, g, w, g, w, g, g, g,
                  w, g, g, g, w, g, g, g,
@@ -260,11 +260,11 @@ def intro_graphic():
                  g, g, g, g, g, g, g, g,
                  g, g, g, g, g, g, g, g,
                  g, g, g, g, g, g, g, g,]
-      return drawing
+        return drawing
 
     # Andre bilde med 2 bosktaver
     def Grand(g, r, w):
-      drawing = [w, g, g, g, w, g, g, g,
+        drawing = [w, g, g, g, w, g, g, g,
                 w, w, g, w, w, g, g, g,
                 w, g, w, g, w, g, g, g,
                 w, g, g, g, w, g, g, g,
@@ -272,11 +272,11 @@ def intro_graphic():
                 r, g, g, g, g, g, g, g,
                 r, g, r, r, g, g, g, g,
                 g, r, r, g, g, g, g, g,]
-      return drawing
+        return drawing
 
     # Tredje bilde med 3 bokstaver
     def Prix(g, r, w):
-      drawing = [w, g, g, g, w, g, g, g,
+        drawing = [w, g, g, g, w, g, g, g,
                 w, w, g, w, w, g, g, g,
                 w, g, w, g, w, g, g, g,
                 w, g, g, g, w, g, g, g,
@@ -284,7 +284,7 @@ def intro_graphic():
                 r, g, g, g, g, r, g, r,
                 r, g, r, r, g, r, r, g,
                 g, r, r, g, g, r, g, g,]
-      return drawing
+        return drawing
 
     # Setter først bakgrunn
     sense.set_pixels(Background)
@@ -301,25 +301,25 @@ def intro_graphic():
     
     # Finner string som er lengst av odd og even for å sette lengde på for-løkke
     if len(TheGame_odd) > len(TheGame_even):
-      StrLenght = len(TheGame_odd)
+        StrLenght = len(TheGame_odd)
     else: StrLenght = len(TheGame_even)
 
     # for løkke for å stave spillnavn meg generel lengde på spillets navn.
     # Bruker if setning, for å unngå lengde error på stringer 
     for character in range(0, StrLenght): # Løkken kjører like lenge som spillets navn.
-      if StrLenght >= len(TheGame_odd): # Sjekker lengde opp mot telleverk for å ikke få index error 
-        sense.show_letter(TheGame_odd[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
-        time.sleep(0.4)  # Delay på 0.4s
-      if StrLenght >= len(TheGame_even): # Sjekker lengde opp mot telleverk for å ikke få index error
-        # Printer hver partall bokstav med hvit bakrunn og sort tekst
-        sense.show_letter(TheGame_even[character], text_colour=[0,0,0], back_colour=[255, 255, 255])
-        time.sleep(0.4)  # Delay på 0.4s
+        if StrLenght >= len(TheGame_odd): # Sjekker lengde opp mot telleverk for å ikke få index error 
+            sense.show_letter(TheGame_odd[character], text_colour=[255, 255, 255], back_colour=[0, 0 ,0])
+            time.sleep(0.4)  # Delay på 0.4s
+        if StrLenght >= len(TheGame_even): # Sjekker lengde opp mot telleverk for å ikke få index error
+            # Printer hver partall bokstav med hvit bakrunn og sort tekst
+            sense.show_letter(TheGame_even[character], text_colour=[0,0,0], back_colour=[255, 255, 255])
+            time.sleep(0.4)  # Delay på 0.4s
     sense.clear()  # Tømmer led-matrise
 
 
 def next_level_graphic(level):
     #Spiller av motorlyd
-    engine_sound = subprocess.Popen(["omxplayer", ENGINE_SOUND])
+    engine_sound = subprocess.Popen(["aplay", ENGINE_SOUND])
 
     #Farger
     W = (255, 255, 255)
@@ -396,7 +396,7 @@ def game_over_graphic(score):
 
     # b er bakgrunn og s er skallen. tegnet opp:
     def skull(b , s):  # Bruker definisjon for å kunne ha forskjellige farger
-      drawing = [b, s, s, s, s, s, b, b,
+        drawing = [b, s, s, s, s, s, b, b,
                 s, s, s, s, s, s, s, b,
                 s, b, b, s, b, b, s, b,
                 s, b, b, s, b, b, s, b,
@@ -404,21 +404,21 @@ def game_over_graphic(score):
                 b, s, s, s, s, s, b, b,
                 b, s, b, s, b, s, b, b,
                 b, b, b, b, b, b, b, b,]
-      return drawing
+        return drawing
 
     # Bruker for-løkke for å endre farge på hodeskalle
     for color_change in range (0, 5):   # Satt til å være hver farge 5 ganger
-      sense.set_pixels(skull(b, pink))  # Rosa skalle
-      time.sleep(0.2) # Delay på 0.2s
-      sense.set_pixels(skull(b, yellow)) # gul skalle
-      time.sleep(0.2) # Delay på 0.2s
+        sense.set_pixels(skull(b, pink))  # Rosa skalle
+        time.sleep(0.2) # Delay på 0.2s
+        sense.set_pixels(skull(b, yellow)) # gul skalle
+        time.sleep(0.2) # Delay på 0.2s
 
     # For-løkke for å printe poeng sum et siffer av gangen
     for number in range(0, len(StrScore)):   # for hvert siffer i poengsum
-      sense.show_letter(StrScore[number], text_colour=b, back_colour=g)  # Bruker show letter for 
-      time.sleep(0.4)  # Setter delay etter tall på 0.4s
-      sense.clear(g)  # Clearer ut forgie siffer
-      time.sleep(0.4) # Delay før neste siffer
+        sense.show_letter(StrScore[number], text_colour=b, back_colour=g)  # Bruker show letter for 
+        time.sleep(0.4)  # Setter delay etter tall på 0.4s
+        sense.clear(g)  # Clearer ut forgie siffer
+        time.sleep(0.4) # Delay før neste siffer
    
     # Printer points til slutt med speed 0.04
     sense.show_message("Points", scroll_speed=0.04, text_colour=b, back_colour=g)
@@ -438,7 +438,7 @@ def winner_graphic():
     # Bruker definisjon for å kunne endre farge på pokalen uten å
     # Måtte ha flere ulike lister
     def cup(x):  # X er den fargen vi ønsker å bytte
-      drawing = [b, x, x, x, x, x, x, b,
+        drawing = [b, x, x, x, x, x, x, b,
                  x, y, x, x, g, x ,y, x,
                  x, y, x, g, g, x, y, x,
                  x, y, x, x, g, x, y, x,
@@ -446,7 +446,7 @@ def winner_graphic():
                  b, b, x, x, g, x, b, b,
                  b, b, b, x, x, b, b, b,
                  b, b, x, x, x, x, b, b,]
-      return drawing
+        return drawing
              
     sense.set_pixels(cup(bronze)) # Setter bronsefarge på pokal
     time.sleep(1.0) # Delay på 0.5s
@@ -598,7 +598,7 @@ def main():
         #Dersom du har 2 eller færre fuel, spill av alarmlyd
         if fuel <= 2:
             if low_fuel_alarm == False:
-                low_fuel_sound = subprocess.Popen(["omxplayer", LOW_FUEL_SOUND])
+                low_fuel_sound = subprocess.Popen(["aplay", LOW_FUEL_SOUND])
                 low_fuel_alarm = True
 
         #Dersom alarmen er på men du har fler enn 2 fuel, skru den av
@@ -617,7 +617,7 @@ def main():
                 if gate_already_taken == False:
                     #Du traff en gate som ikke har blitt truffet før
                     score += 1
-                    score_sound = subprocess.Popen(["omxplayer", SCORE_SOUND])
+                    score_sound = subprocess.Popen(["aplay", SCORE_SOUND])
 
                     #Denne variablen passer på at du ikke tar gaten flere ganger
                     gate_already_taken = True
@@ -633,7 +633,7 @@ def main():
                 if fuel_x_pos == car_x_pos:
                     if fuel_already_taken == False:
                         fuel += 2
-                        pickup_fuel_sound = subprocess.Popen(["omxplayer", PICKUP_FUEL_SOUND])
+                        pickup_fuel_sound = subprocess.Popen(["aplay", PICKUP_FUEL_SOUND])
 
                         #Denne variablen passer på at du ikke tar fuelen flere ganger
                         fuel_already_taken = True
@@ -661,7 +661,7 @@ def main():
         if fuel <= 0:
             #Avslutter "theme_song" og spiller av game over
             theme_song.kill()
-            game_over_sound = subprocess.Popen(["omxplayer", GAME_OVER_SOUND])
+            game_over_sound = subprocess.Popen(["aplay", GAME_OVER_SOUND])
             game_over_graphic(score)
             draw_sad_midjo(8)
 
