@@ -581,6 +581,10 @@ def main():
             if fuel_already_taken == False:
                 fuel -= 1
 
+                if fuel <= 2:
+                    musicplayer = subprocess.Popen(["omxplayer", LOW_FUEL_SOUND])
+
+
 
         #Oppdaterer fuelbaren med verdi fra "fuel"
         buffer = draw_fuel(buffer, fuel)
@@ -592,6 +596,7 @@ def main():
                 if gate_already_taken == False:
                     #Du traff en gate som ikke har blitt truffet før
                     score += 1
+                    musicplayer = subprocess.Popen(["omxplayer", SCORE_SOUND])
 
                     #Denne variablen passer på at du ikke tar gaten flere ganger
                     gate_already_taken = True
@@ -607,7 +612,7 @@ def main():
                 if fuel_x_pos == car_x_pos:
                     if fuel_already_taken == False:
                         fuel += 2
-                        #TODO: Blink fuelbaren når du treffer fuel
+                        musicplayer = subprocess.Popen(["omxplayer", PICKUP_FUEL_SOUND])
 
                         #Denne variablen passer på at du ikke tar fuelen flere ganger
                         fuel_already_taken = True
@@ -633,6 +638,7 @@ def main():
 
         #Om du går tom for fuel er spillet over
         if fuel <= 0:
+            musicplayer = subprocess.Popen(["omxplayer", GAME_OVER_SOUND])
             game_over_graphic(score)
             draw_sad_midjo(8)
             #TODO: Legg til scoreboard som leser fra en fil "hiscore.txt" og
