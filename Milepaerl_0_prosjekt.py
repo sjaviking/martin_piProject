@@ -538,7 +538,8 @@ def martin():
 
   
 def andre():
-    pressure_0 = sense.get_pressure()
+    #Henter trykkverdier fra SenseHat
+    pressure_0 = sense.get_pressure() 
     r = RED
     o = ORANGE
     g = GREEN
@@ -549,7 +550,7 @@ def andre():
         pressure = sense.get_pressure()
         # Define some colours
         
-
+    #Sjekker hvor høyt trykket har endret seg i forhold til startverdi.
         if pressure < pressure_0 + 0.02:
             display = [
             s, s, s, s, s, s, s, s,
@@ -654,7 +655,7 @@ def andre():
         sense.set_pixels(display)
         i += 1
         time.sleep(0.10)
-    return pressure
+    return pressure #Returnerer pressure verdi til csv-fil
 
 
 def main():
