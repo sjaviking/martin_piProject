@@ -1,16 +1,24 @@
 <html>
-
-<body style="background-color: black; color: white;">
+<head>
     <script src="https://cdn.socket.io/4.4.0/socket.io.min.js"
         integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj"
         crossorigin="anonymous"></script>
     <script defer src="main.js?version=3"></script>
-    <h1>
-        Press <span id="left-arrow">⬅️</span> and <span id="right-arrow">➡️</span> to control the car on the Raspberry
-        PI
-    </h1>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <h2>Controls:</h2>
+    <h3 style="color: gray;"><span id="left-arrow">⬅️</span> and <span id="right-arrow">➡️</span> on PC </h3>
+    <h3 style="color: gray;">Or click "Enable Gyro" to use your phone as a steering wheel</h3>
     <h2 id="connection-status">Status: Connecting ...</h2>
-    <button id="toggle-gyro-button" onclick="onToggleGyro()" style="background-color: rgb(78, 25, 25); color: white; height: 100px; width: 100px; border:black 1px solid;">Enable Gyro</button>
+    <button id="toggle-gyro-button" onclick="onToggleGyro()" class="gyro-button">Enable Gyro</button>
+    <h3 id="total-score">Total Score: 0</h3>
+    <h3 id="score">Score: 0</h3>
+    <div id="fuel"></div>
+    <div id="low-fuel" class="low-fuel" disabled>Low fuel</div>
+    <h3>Pick a color</h3>
+    <div id="colors">
+    </div>
 </body>
 
 </html>
