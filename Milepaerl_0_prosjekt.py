@@ -520,20 +520,21 @@ def rickroll(number_of_frames=5300, rel_path="../Pictures/rickroll"):
             
             
 def martin():
+  # Setter opp en liste med de farger jeg ønsker å bruke
     available_colors = [RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW]
     
-    i = 0
+    # bruker for-løkke som teller fra 0 til 70
     for i in range (0, 70):
-        for _y in range (0, 8):
-            for _x in range (0, 8):
-                random_colors = choice(available_colors)
-                sense.set_pixel(_x,_y, random_colors)
-                _x += 1 
-            _y += 1
-        i += 1
-        time.sleep(0.1)
-    compass = sense.get_compass()
-    return compass
+        for _y in range (0, 8): # Teller y antall pixler
+            for _x in range (0, 8): # Teller x antall pixler
+                random_colors = choice(available_colors) # Bruker choice til å finne randome farge
+                sense.set_pixel(_x,_y, random_colors) # setter den pixelen til den tilfeldige fargen
+                _x += 1  # Teller opp på x 
+            _y += 1 # Teller opp på y 
+        i += 1 # teller opp på i
+        time.sleep(0.1) # Delay på 0.1s
+    compass = sense.get_compass()   # henter til slutt ut kompassdata
+    return compass # Returnerer kompassdata
 
   
 def andre():
