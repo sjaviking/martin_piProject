@@ -1,7 +1,45 @@
 const socket = io(location.origin)
 
+scoreText = document.getElementById('score')
+totalScoreText = document.getElementById('total-score')
+lowFuelBox = document.getElementById("low-fuel")
+fuelBar = document.getElementById('fuel')
 connectionStatusText = document.getElementById("connection-status")
 connectionStatusText.style.color = "orange"
+
+const FUEL_MAX = 8
+function drawFuel(fuel) {
+    const fuelPercentage = fuel / FUEL_MAX * 100
+    fuelBar.style.width = fuelPercentage + 'px'
+}
+
+colors = [
+    ["red", [255, 0, 0]],
+    ["orange", [255, 165, 0]],
+    ["yellow", [255, 255, 0]],
+    ["green", [0, 255, 0]],
+    ["blue", [0, 0, 255]],
+    ["indigo", [75, 0, 130]],
+    ["violet", [238, 130, 238]],
+    ["white", [255, 255, 255]],
+]
+
+let selectedColorButton = null
+colors.forEach(([colorName, rgb]) => {
+    const colorButton = document.createElement("button")
+    colorButton.className = "color-button"
+    const [r, g, b] = rgb
+    colorButton.style.backgroundColor = `rgb(${r}, ${g}, ${b})`
+    colorButton.addEventListener("click", () => {
+        emit("change_color", rgb)
+        if(selectedColorButton) {
+            selectedColorButton.classList.remove("color-button-selected")
+        }
+        selectedColorButton = colorButton
+        selectedColorButton.classList.add("color-button-selected")
+    })
+    document.getElementById("colors").appendChild(colorButton)
+})
 
 socket.on('connect', () => {
     connectionStatusText.innerHTML = "Status: Connected"
@@ -14,10 +52,41 @@ socket.on('disconnect', () => {
     connectionStatusText.style.color = "red"
 });
 
+socket.on('low_fuel', (isLowFuel) => {
+    if(isLowFuel) {
+        lowFuelBox.classList.add("low-fuel-active")
+    } else {
+        lowFuelBox.classList.remove("low-fuel-active")
+    }
+});
+
+socket.on('fuel', (fuel) => {
+    drawFuel(fuel)
+});
+
+socket.on('score', (score) => {
+    scoreText.innerHTML = "Score: " + score
+});
+
+socket.on('total_score', (totalScore) => {
+    totalScoreText.innerHTML = "Total Score: " + totalScore
+});
+
+socket.on('reset', () => {
+    scoreText.innerHTML = "Score: " + 0
+    totalScoreText.innerHTML = "Total Score: " + 0
+    lowFuelBox.disabled = true
+    drawFuel(FUEL_MAX)
+});
+
 function emit(event, data) {
     if (socket.connected) {
         socket.emit(event, data)
     }
+}
+
+function changeColor(color) {
+    emit('change_color', color)
 }
 
 function colorize(direction, color) {
