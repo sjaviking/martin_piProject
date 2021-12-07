@@ -8,6 +8,9 @@ import threading
 from sense_hat import SenseHat
 sense = SenseHat()
 
+host_multiplayer = "host" in sys.argv
+
+socketio = None
 
 """
 En liten visualisering på hvordan BUFFER fungerer
@@ -38,6 +41,7 @@ COLS = 8
 FPS = 20
 FRAME_DURATION = 1 / FPS
 
+MAX_FUEL = COLS
 FUEL_SPAWN_CHANCE = 2
 FUEL_DECREASE = 23
 FUEL_FREQUENCY = 8
@@ -47,6 +51,7 @@ GATE_FREQUENCY = 8
 GATE_SLOWNESS = 4
 
 CAR_Y_POS = 6
+DEFAULT_CAR_X_POS = 4
 
 CAR_COLOR = (255, 255, 255)
 FUEL_COLOR = (120, 255, 0)
@@ -63,19 +68,129 @@ ENGINE_SOUND =       "sound/engine_sound.wav"
 #TODO: Finn en ordentlig måte å spille av lyd på.
 #      Akkurat nå fortsetter lyden å spille etter python-programmet har stoppa.
 
+class Car:
+    def __init__(self, color):
+        self.x = DEFAULT_CAR_X_POS
+        self.y = 0
+        self.color = color
+        self.fuel = MAX_FUEL
+        
+    def get_position(self):
+        return self.x
+        
+    def get_color(self):
+        return self.color
+    
+    def set_color(self, color):
+        self.color = color
+        
+    def move_to(self, pos):
+        self.x = restrict_value(pos, 0, COLS - 1)
+    
+    def move(self, change):
+        self.move_to(self.x + change)
+        
+    def change_fuel(self, change):
+        self.set_fuel(self.fuel + change)
+    
+    def set_fuel(self, fuel):
+        self.fuel = restrict_value(fuel, 0, MAX_FUEL)
+    
+    def get_fuel(self):
+        return self.fuel
+    
+    def move_left(self):
+        self.move(-1)
+        
+    def move_right(self):
+        self.move(1)
+        
+    def reset(self):
+        self.set_fuel(MAX_FUEL)
+        
+    
+class Player:
+    def __init__(self, car, sid):
+        self.car = car
+        self.total_score = 0
+        self.score = 0
+        self.sid = sid
+        self.is_low_fuel = False
+    
+    def get_sid(self):
+        return self.sid
+    
+    def get_car(self):
+        return self.car
+
+    def set_score(self, score):
+        self.score = score
+        
+    def set_total_score(self, total_score):
+        self.total_score = total_score
+        
+    def change_score(self, change):
+        self.score += change
+        
+    def change_total_score(self, change):
+        self.total_score += change
+        
+    def get_score(self):
+        return self.score
+    
+    def get_total_score(self):
+        return self.total_score
+    
+    def is_dead(self):
+        return self.get_car().get_fuel() == 0
+    
+    def is_low_fuel_alarm(self):
+        return self.is_low_fuel
+
+    def set_low_fuel_alarm(self, is_low_fuel):
+        self.is_low_fuel = is_low_fuel
+        
+    def reset(self):
+        #Reset score, total_score og fuel
+        self.set_score(0)
+        self.set_total_score(0)
+        self.get_car().reset()
+
+# sid -> Player()
+players = dict()
+players['pi'] = Player(Car(CAR_COLOR), 'pi')
+
+def get_player(sid):
+    return players[sid]
+
+def get_living_players():
+    list_of_players = list(players.values())
+    return [player for player in list_of_players if not player.is_dead()]
+
+def get_local_player():
+    return get_player('pi')
+
+def emit_websocket(player, event, data=None):
+    if socketio and host_multiplayer and (player is not get_local_player()):
+        socketio.emit(event, data, to=player.get_sid() if player else None, broadcast=player == None)
+
+prev_buffer = None
+def set_pixels(buffer):
+    global prev_buffer
+    if buffer != prev_buffer:
+        sense.set_pixels(buffer)
+        emit_websocket(None, 'pixels', buffer)
+        prev_buffer = buffer
+
+def set_pixel(x, y, color):
+    global prev_buffer
+    #copy the previous buffer
+    buffer = prev_buffer.copy()
+    buffer[y * COLS + x] = color
+    set_pixels(buffer)
 
 def restrict_value(value, min_value, max_value):
     return max(min_value, min(max_value, value))
-
-    
-def move_car_to(pos):
-    global car_x_pos
-    car_x_pos = pos
-
-    
-def move_car(change):
-    move_car_to(restrict_value(car_x_pos + change, 0, COLS - 1))
-
 
 def get_gate_pos(gate_width):
     """Returner x-posisjon til gate som du skal treffe med bilen"""
@@ -138,8 +253,6 @@ def draw_score_bar(buffer, score):
     #Passer på at "binary_str_score" er BAR_LENGTH lang
     leading_zeros = "0" * (BAR_LENGTH - len(binary_str_score)) 
     binary_str_score = leading_zeros + binary_str_score
-
-    print("score: ", score, " bin: ", binary_str_score)
     
     #Legger til bakgrunnen
     for x in range(BAR_LENGTH):
@@ -226,18 +339,18 @@ def draw_sad_midjo(animation_length):
     buffer = midjo_portrait
     tear_color = (0, 0, 80)
           
-    sense.set_pixels(midjo_portrait)
+    set_pixels(midjo_portrait)
     for frame in range(animation_length):
         #tear 1
         for i in range(3):
-            sense.set_pixel(3, 3+i, tear_color)
+            set_pixel(3, 3+i, tear_color)
             time.sleep(0.1)
         
         #tear 2
         for j in range(3):
-            sense.set_pixel(5, 3+j, tear_color)
+            set_pixel(5, 3+j, tear_color)
             time.sleep(0.1)
-        sense.set_pixels(midjo_portrait)
+        set_pixels(midjo_portrait)
 
 
 def intro_graphic():
@@ -292,16 +405,16 @@ def intro_graphic():
         return drawing
 
     # Setter først bakgrunn
-    sense.set_pixels(Background)
+    set_pixels(Background)
     time.sleep(1) # Delay på 1s
     # Setter så M i bildet
-    sense.set_pixels(Midjo(g, w))
+    set_pixels(Midjo(g, w))
     time.sleep(1) # Delay på 1s
-    sense.set_pixels(Grand(g, r, w))
+    set_pixels(Grand(g, r, w))
     # Setter så G i bildet
     time.sleep(1) # Delay på 1s
     # Setter så siste bokstav i bildet
-    sense.set_pixels(Prix(g, r, w))
+    set_pixels(Prix(g, r, w))
     time.sleep(1) # Delay på 1s
     
     # Finner string som er lengst av odd og even for å sette lengde på for-løkke
@@ -371,7 +484,7 @@ def next_level_graphic(level):
         # Clearer og printer ut speedometeret for hvert nivå,
         # helt til den når siste nivå for angitt level 
         sense.clear()
-        sense.set_pixels(pixels)
+        set_pixels(pixels)
         time.sleep(0.4)
   
     # Hastigheten på teksten som printes        
@@ -413,9 +526,9 @@ def game_over_graphic(score):
 
     # Bruker for-løkke for å endre farge på hodeskalle
     for color_change in range (0, 5):   # Satt til å være hver farge 5 ganger
-        sense.set_pixels(skull(b, pink))  # Rosa skalle
+        set_pixels(skull(b, pink))  # Rosa skalle
         time.sleep(0.2) # Delay på 0.2s
-        sense.set_pixels(skull(b, yellow)) # gul skalle
+        set_pixels(skull(b, yellow)) # gul skalle
         time.sleep(0.2) # Delay på 0.2s
 
     # For-løkke for å printe poeng sum et siffer av gangen
@@ -453,11 +566,11 @@ def winner_graphic():
                  b, b, x, x, x, x, b, b,]
         return drawing
              
-    sense.set_pixels(cup(bronze)) # Setter bronsefarge på pokal
+    set_pixels(cup(bronze)) # Setter bronsefarge på pokal
     time.sleep(1.0) # Delay på 0.5s
-    sense.set_pixels(cup(silver)) # Setter sølvarge på pokal
+    set_pixels(cup(silver)) # Setter sølvarge på pokal
     time.sleep(1.0) # delay på 0.5s
-    sense.set_pixels(cup(gold)) # Setter gullfarge på pokal
+    set_pixels(cup(gold)) # Setter gullfarge på pokal
     time.sleep(1.0) # Dealy på 1s før program kjører videre
 
 def get_imu_values():
@@ -507,17 +620,12 @@ def debug_print(buffer):
 def main():
     running = True
     iterator = 0
-    score = 0
-    total_score = 0
-    fuel = 8
 
     #TODO: disse variablene burde reformateres bort/legges inn i while
     turn = 0
     visible_fuel_list = []
-    car_x_pos = 4
     fuel_already_taken = False
     gate_already_taken = False
-    low_fuel_alarm = False
 
     #TODO: reformater koden slik at en kan endre level og dermed alle frekvenser
     #      automatisk.
@@ -559,12 +667,14 @@ def main():
         imu_values = get_imu_values()
 
 
-        #Finn ut hvor bilen skal stå
-        car_x_pos = calculate_car_position(imu_values)
+        #Finn ut hvor bilen til spilleren som kjører på pien skal stå
+        get_local_player().get_car().move_to(calculate_car_position(imu_values))
 
-
-        #Legg bilen til i printebuffer
-        buffer[CAR_Y_POS][car_x_pos] = CAR_COLOR
+        for player in get_living_players():
+            car = player.get_car()
+            #Legg bilen til i printebuffer
+            buffer[CAR_Y_POS][car.get_position()] = car.get_color()
+        
         
 
         #Etter "GATE_FREQUENCY" iterasjoner, lag en ny gate
@@ -597,56 +707,66 @@ def main():
         #Fuelnivået synker hver FUEL_DECREASE 'te gang
         if iterator % FUEL_DECREASE == 0:
             if fuel_already_taken == False:
-                fuel -= 1
+                for player in get_living_players():
+                    player.get_car().change_fuel(-1)
+                    emit_websocket(player, "fuel", player.get_car().get_fuel())
 
 
-        #Dersom du har 2 eller færre fuel, spill av alarmlyd
-        if fuel <= 2:
-            if low_fuel_alarm == False:
-                low_fuel_sound = subprocess.Popen(["aplay", LOW_FUEL_SOUND])
-                low_fuel_alarm = True
+        for player in get_living_players():
+            #Dersom du har 2 eller færre fuel, spill av alarmlyd
+            if player.get_car().get_fuel() <= 2:
+                if player.is_low_fuel_alarm() == False:
+                    player.set_low_fuel_alarm(True)
+                    emit_websocket(player, "low_fuel", True)
+                    if player is get_local_player():
+                        low_fuel_sound = subprocess.Popen(["aplay", LOW_FUEL_SOUND])
+                        
 
-        #Dersom alarmen er på men du har fler enn 2 fuel, skru den av
-        if fuel > 2:
-            low_fuel_sound.kill()
-            low_fuel_alarm = False
+            #Dersom alarmen er på men du har fler enn 2 fuel, skru den av
+            if player.get_car().get_fuel() > 2:
+                if player.is_low_fuel_alarm() == True:
+                    player.set_low_fuel_alarm(False)
+                    emit_websocket(player, "low_fuel", False)
+                    if player is get_local_player():
+                        low_fuel_sound.kill()
 
 
         #Oppdaterer fuelbaren med verdi fra "fuel"
-        buffer = draw_fuel(buffer, fuel)
-
-
+        buffer = draw_fuel(buffer, get_local_player().get_car().get_fuel())
+                
+            
         #Når bilen passerer en gate, sjekk om du traff
-        if CAR_Y_POS == gate_y_pos:
-            if gate_x_pos <= car_x_pos <= gate_x_pos + gate_width:
-                if gate_already_taken == False:
-                    #Du traff en gate som ikke har blitt truffet før
-                    score += 1
-                    score_sound = subprocess.Popen(["aplay", SCORE_SOUND])
+        if CAR_Y_POS == gate_y_pos:     
+            for player in get_living_players():
+                if gate_x_pos <= player.get_car().get_position() <= gate_x_pos + gate_width:
+                    if gate_already_taken == False:
+                        #Du traff en gate som ikke har blitt truffet før
+                        player.change_score(1)
+                        emit_websocket(player, "score", player.get_score())
+                        if player is get_local_player():
+                            score_sound = subprocess.Popen(["aplay", SCORE_SOUND])
 
-                    #Denne variablen passer på at du ikke tar gaten flere ganger
-                    gate_already_taken = True
+            #Denne variablen passer på at du ikke tar gaten flere ganger
+            gate_already_taken = True
 
 
         #Tegner poengbar i toppen av skjermen
-        buffer = draw_score_bar(buffer, score)
-
+        buffer = draw_score_bar(buffer, get_local_player().get_score())
 
         #Når bilen passerer en fuel, sjekk om du traff
         if iterator > 1:
             if CAR_Y_POS == fuel_y_pos:
-                if fuel_x_pos == car_x_pos:
-                    if fuel_already_taken == False:
-                        fuel += 2
-                        pickup_fuel_sound = subprocess.Popen(["aplay", PICKUP_FUEL_SOUND])
-
-                        #Denne variablen passer på at du ikke tar fuelen flere ganger
-                        fuel_already_taken = True
-
-
-        #Om tanken blir full renner det over
-        if fuel > 8:
-            fuel = 8
+                for player in get_living_players():
+                    if fuel_x_pos == player.get_car().get_position():
+                        if fuel_already_taken == False:
+                            player.get_car().change_fuel(2)
+                            emit_websocket(player, "fuel", player.get_car().get_fuel())
+                            if player is get_local_player():
+                                pickup_fuel_sound = subprocess.Popen(["aplay", PICKUP_FUEL_SOUND])
+                            
+                # Indenter denne linjen opp til for-loopen for å kun gi fuel til 1 spiller
+                #Denne variablen passer på at du ikke tar fuelen flere ganger
+                fuel_already_taken = True
 
 
         #Inkrementer iterator
@@ -659,15 +779,13 @@ def main():
 
 
         #Printer til sensehat-skjermen
-        sense.set_pixels(flat_buffer)
+        set_pixels(flat_buffer)
 
-
-        #Om du går tom for fuel er spillet over
-        if fuel <= 0:
+        if len(get_living_players()) == 0:
             #Avslutter "theme_song" og spiller av game over
             theme_song.kill()
             game_over_sound = subprocess.Popen(["aplay", GAME_OVER_SOUND])
-            game_over_graphic(score)
+            game_over_graphic(get_local_player().get_score())
             draw_sad_midjo(8)
 
             #TODO: Legg til scoreboard som leser fra en fil "hiscore.txt" og
@@ -678,24 +796,27 @@ def main():
 
             #Venter på at spilleren skal trykke på joystick
             wait_for_joystick_released()
-
-            #Reset score, total_score og fuel
-            score = 0
-            total_score = 0
-            fuel = 8
+            list_of_players = list(players.values())
+            for player in list_of_players:
+                player.reset()
+                emit_websocket(player, "reset")
+                
             level = 1
 
             next_level_graphic(level)
 
-        
         #Sjekk om du har nok poeng til å gå til neste nivå
-        if score >= level_score_requirement:
+        if all(player.get_score() >= level_score_requirement for player in get_living_players()):
             #Inkrementerer nivåvariablen
             level += 1
 
             #Nullstiller score
-            total_score += score
-            score = 0
+            
+            for player in get_living_players():
+                player.change_total_score(player.get_score())
+                player.set_score(0)
+                emit_websocket(player, "score", 0)
+                emit_websocket(player, "total_score", player.get_total_score())
 
             #Print grafikk for neste level
             if level <= 3:
@@ -709,9 +830,10 @@ def main():
                 wait_for_joystick_released()
 
                 #Reset score, total_score og fuel
-                score = 0
-                total_score = 0
-                fuel = 8
+                list_of_players = list(players.values())
+                for player in list_of_players:
+                    player.reset()
+                    emit_websocket(player, "reset")
                 level = 1
                 next_level_graphic(level)
 
@@ -725,7 +847,7 @@ def host_websocket():
         Multiplayer is hosted on
         http://pearpie.is-very-sweet.org:5001/site/index.html
     """
-    from flask import Flask
+    from flask import Flask, request
     from sense_hat import SenseHat
     from flask_cors import CORS
     from flask_socketio import SocketIO
@@ -734,21 +856,41 @@ def host_websocket():
     app = Flask(__name__, static_url_path='/site', static_folder='web')
     cors = CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
+    global socketio
     socketio = SocketIO(app, cors_allowed_origins="*")
+
+    @socketio.on('connect')
+    def on_connect():
+        if not request.sid in players:
+            players[request.sid] = Player(Car(CAR_COLOR), request.sid)
+            print("Player connected: " + request.sid)
+
+    @socketio.on('disconnect')
+    def on_disconnect():
+        players.pop(request.sid)
+        print("Player disconnected: " + request.sid)
+
+    @socketio.on('change_color')
+    def on_change_color(json):
+        player = players[request.sid]
+        if player:
+            player.get_car().set_color(json)
+            print("Player " + request.sid + " changed color to " + json)
 
     @socketio.on('move_to')
     def on_socket_move_to(json):
         # Json is in this case an int sent by the ws client
-        move_car_to(json)
-        print(car_x_pos)
+        car = get_player(request.sid).get_car()
+        car.move_to(json)
+        print(car.get_position())
 
     @socketio.on('move_left')
     def on_socket_move_left(json):
-        move_car(-1)
+        get_player(request.sid).get_car().move_left()
 
     @socketio.on('move_right')
     def on_socket_move_right(json):
-        move_car(1)
+        get_player(request.sid).get_car().move_right()
 
     @socketio.on('stop_moving_left')
     def on_socket_stop_move_left(json):
@@ -787,11 +929,9 @@ def host_websocket():
         app.run(host="0.0.0.0", port=port, ssl_context=context)
     else:
         app.run(host="0.0.0.0", port=port)
-    socketio.run(app)
 
 if __name__ == "__main__":
     # use command "sudo python3 Milepael_2.py host" to host multiplayer
-    if len(sys.argv) == 0:
-        if sys.argv[1] == "host":
-            threading.Thread(target=host_websocket).start()
+    if host_multiplayer:
+        threading.Thread(target=host_websocket).start()
     main()

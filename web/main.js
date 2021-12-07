@@ -1,5 +1,6 @@
 const socket = io(location.origin)
 
+pixelContainer = document.getElementById("pixels")
 scoreText = document.getElementById('score')
 totalScoreText = document.getElementById('total-score')
 lowFuelBox = document.getElementById("low-fuel")
@@ -41,6 +42,22 @@ colors.forEach(([colorName, rgb]) => {
     document.getElementById("colors").appendChild(colorButton)
 })
 
+function getRange(min, max) {
+    return Array.from({length: max - min + 1}, (_, i) => min + i)
+}
+
+getRange(0, 7).forEach(y => {
+    const row = document.createElement("div")
+    row.className = "row-" + y
+    pixelContainer.appendChild(row)
+    getRange(0, 7).forEach(x => {
+        const pixel = document.createElement("div")
+        pixel.id = "pixel-" + (y * 8 + x)
+        pixel.className = "pixel"
+        row.appendChild(pixel)
+    })
+})
+
 socket.on('connect', () => {
     connectionStatusText.innerHTML = "Status: Connected"
     connectionStatusText.style.color = "green"
@@ -71,6 +88,15 @@ socket.on('score', (score) => {
 socket.on('total_score', (totalScore) => {
     totalScoreText.innerHTML = "Total Score: " + totalScore
 });
+
+socket.on('pixels', (pixels) => {
+    if(pixels) {
+        pixels.forEach(([r, g, b], index)=>{
+            const pixel = document.getElementById(`pixel-${index}`)
+            pixel.style.backgroundColor = `rgb(${r}, ${g}, ${b})`
+        })
+    }
+})
 
 socket.on('reset', () => {
     scoreText.innerHTML = "Score: " + 0
