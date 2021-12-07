@@ -100,17 +100,22 @@ def draw_fuel(mod_buffer, x):
     x_pos_fuelGauge_lokal = 7 #sier bare hvilken kolonne du ønsker
     i = 0
     u = 0
+    # En spørring for å sikre at x ikke er større enn 8, eller mindre enn 0
     if x < 0:
         return mod_buffer
     if x > 8:
         x = 8
+        
     #Dette skriver om på buffer, og lager en kollonne med fuel
     while i < x:
         mod_buffer[i][x_pos_fuelGauge_lokal] = (255 - u, u, 0)
         i += 1
-        u += 36
-    u = 0 #bruker u som nullverdi for neste whileløkke
-        #og beholder i, ettersom i er y verdi for sorte pixler
+        u += 36 
+    """Bruker u som nullverdi for neste whileløkke
+        og beholder i, ettersom i er y verdi for sorte pixler
+        Sikrer at du tegner over eventuelle drivstoffpixler 
+        fra siste gang du tegnet"""
+    u = 0
     resterende_pixler = 8 - x
     while u < resterende_pixler:
         mod_buffer[i][x_pos_fuelGauge_lokal] = NOCOLOR
