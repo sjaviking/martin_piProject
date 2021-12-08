@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 
+'''
+For enkelhet skyld har vi valgt å bare kommentere ut om vi ønsker å bruke etasjemåling eller ikke.
+Dette da vi heller har brukt tiden vår på å bli kjent med Pi og Sense HAT.
+Vi kunne selvfølgelig laget det som en del av programmet. Eks velge modus med stick_up, men
+dette ble ikke prioritert.
+'''
+
 # henter inn ulike bibliotek for bruk i koden
 from sense_hat import SenseHat
 from time import sleep
