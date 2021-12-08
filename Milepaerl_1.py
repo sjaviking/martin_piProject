@@ -56,7 +56,6 @@ def write_to_log(write_data):
         # skriver write_data variabel til log-fil og slutter med linjeskift
         f.write(str(write_data) + '\n')
         
-'''
 # Tegning av etasje i egen funskjon
 def draw(etasje):
     message = 'etg ' +  etasje  # lager string av etasje
@@ -75,8 +74,7 @@ def calcEtasjer():
     if etasje < 0:
         etasje = 0
     elif etasje > toppetasje:
-        etasje = toppetasje      
-  '''     
+        etasje = toppetasje          
         
 while True:
     # Show message viser bruker hvordan PI styres
