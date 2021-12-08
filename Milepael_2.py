@@ -1,15 +1,25 @@
 import random
 import time
 import os
-import subprocess
 import sys
-import threading
 
 from sense_hat import SenseHat
 sense = SenseHat()
 
 
-### Konstanter
+class killable:
+    def kill():
+        pass
+
+
+class subprocess:
+    @classmethod
+    def Popen(a, b):
+        return killable()
+
+
+sense.set_rotation(270)
+
 ROWS = 8
 COLS = 8
 
@@ -600,21 +610,6 @@ def wait_for_joystick_released():
     event = sense.stick.wait_for_event(emptybuffer=True)
     if event.action == "released":
         print("SPILLET RESTARTER")
-
-
-def debug_print(buffer):
-    """Printer buffer til terminal"""
-    os.system("clear")
-    for line in buffer:
-        for char in line:
-            if char == NOCOLOR:
-                print("..", end="")
-            if char == CAR_COLOR:
-                print("XX", end="")
-            if char == GATE_COLOR:
-                print("OO", end="")
-        print()
-    print()
 
 
 class ApiController:
