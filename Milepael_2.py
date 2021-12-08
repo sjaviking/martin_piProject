@@ -8,29 +8,8 @@ import threading
 from sense_hat import SenseHat
 sense = SenseHat()
 
-"""
-En liten visualisering på hvordan BUFFER fungerer
-Det er en liste, delt inn i 8 lister, alle med 8 verdier hver
-Hver liste fungerer som en y verdi, og hvert element i listen fungerer som en x verdi
-Ser litt sånn her ut:
 
-BUFFER:
---                                           --
-| y_0[x_0, x_1, x_2, x_3, x_4, x_5, x_6, x_7] |
-| y_1[x_0, x_1, x_2, x_3, x_4, x_5, x_6, x_7] |
-| y_2[x_0, x_1, x_2, x_3, x_4, x_5, x_6, x_7] |
-| ... -->                                     |
---                                           --
-Eksempel:
-Med fuel ønsker vi bare å bruke x_7 pixler
-Derfor henter vi disse pixlene med f.eks en for/while løkke
-hvor y varierer, mens x er konstant
-i = 0
-while i < 8:
-    x_kordinater = BUFFER[i][7]
-    i += 1
-"""
-
+### Konstanter
 ROWS = 8
 COLS = 8
 
@@ -61,8 +40,6 @@ LOW_FUEL_SOUND = "sound/low_fuel_midjo_gp.wav"
 SCORE_SOUND = "sound/point_midjo_gp.wav"
 GAME_OVER_SOUND = "sound/game_over_midjo_gp.wav"
 ENGINE_SOUND = "sound/engine_sound.wav"
-# TODO: Finn en ordentlig måte å spille av lyd på.
-#      Akkurat nå fortsetter lyden å spille etter python-programmet har stoppa.
 
 
 class Car:
@@ -221,7 +198,7 @@ def get_fuel_pos():
     return fuel_pos
 
 
-def draw_fuel(mod_buffer, x):
+def draw_fuel_bar(mod_buffer, x):
     """Mellom 0 og 8, 0 er null fuel, 8 er max fuel
     funksjonen tar inn buffer-variabel og x (fuel)
     returnerer en modifisert buffer"""
@@ -280,7 +257,7 @@ def draw_score_bar(buffer, score):
     return buffer
 
 
-def draw_sad_midjo(pixel_buffer, animation_length):
+def draw_sad_midjo(pixel_buffer, number_of_tears):
     """Tegner en animasjon av Midjo som gråter"""
 
     midjo_portrait = [
@@ -353,13 +330,13 @@ def draw_sad_midjo(pixel_buffer, animation_length):
     tear_color = (0, 0, 80)
 
     pixel_buffer.set_pixels(midjo_portrait)
-    for frame in range(animation_length):
-        # tear 1
+    for frame in range(number_of_tears):
+        # Tegner første tåre
         for i in range(3):
             pixel_buffer.set_pixel(3, 3+i, tear_color)
             time.sleep(0.1)
 
-        # tear 2
+        # Tegner andre tåre
         for j in range(3):
             pixel_buffer.set_pixel(5, 3+j, tear_color)
             time.sleep(0.1)
@@ -619,12 +596,14 @@ def calculate_car_position(gyro):
 
 
 def wait_for_joystick_released():
+    """Stopper programmet til brukeren presser joystick"""
     event = sense.stick.wait_for_event(emptybuffer=True)
     if event.action == "released":
         print("SPILLET RESTARTER")
 
 
 def debug_print(buffer):
+    """Printer buffer til terminal"""
     os.system("clear")
     for line in buffer:
         for char in line:
@@ -791,14 +770,11 @@ def main(player_database, api_controller, pixel_buffer):
     running = True
     iterator = 0
 
-    # TODO: disse variablene burde reformateres bort/legges inn i while
+    # Initialisering av variabler
     turn = 0
     visible_fuel_list = []
     fuel_already_taken = False
     gate_already_taken = False
-
-    # TODO: reformater koden slik at en kan endre level og dermed alle frekvenser
-    #      automatisk.
 
     # Spillet starter på nivå 1, så inkrementerer når du når det neste nivået
     level = 1
@@ -852,7 +828,7 @@ def main(player_database, api_controller, pixel_buffer):
         buffer[gate_y_pos][gate_x_pos] = GATE_COLOR  # Venstre påle
         buffer[gate_y_pos][gate_x_pos + gate_width] = GATE_COLOR  # Høyre påle
 
-        # Etter "FUEL_FREQUENCY" iterasjoner, lag en ny gate
+        # Etter "FUEL_FREQUENCY" iterasjoner, lag en ny fuel
         if iterator % (FUEL_FREQUENCY * FUEL_SLOWNESS) == 1:
             fuel_x_pos = get_fuel_pos()
             fuel_y_start = iterator
@@ -891,7 +867,7 @@ def main(player_database, api_controller, pixel_buffer):
                         low_fuel_sound.kill()
 
         # Oppdaterer fuelbaren med verdi fra "fuel"
-        buffer = draw_fuel(
+        buffer = draw_fuel_bar(
             buffer, player_database.get_local_player().get_car().get_fuel())
 
         # Når bilen passerer en gate, sjekk om du traff
@@ -941,6 +917,7 @@ def main(player_database, api_controller, pixel_buffer):
         # Printer til sensehat-skjermen
         pixel_buffer.set_pixels(flat_buffer)
 
+        # Sjekker om alle spillerene har tapt
         if len(player_database.get_living_players()) == 0:
             # Avslutter "theme_song" og spiller av game over
             theme_song.kill()
@@ -971,7 +948,6 @@ def main(player_database, api_controller, pixel_buffer):
             level += 1
 
             # Nullstiller score
-
             for player in player_database.get_living_players():
                 player.change_total_score(player.get_score())
                 player.set_score(0)
@@ -983,8 +959,9 @@ def main(player_database, api_controller, pixel_buffer):
             if level <= 3:
                 next_level_graphic(pixel_buffer, level)
 
+            # Dersom level er over 3 har du runna spillet
             if level > 3:
-                # Du har runna spillet
+                # Vis grafikken med en pokal
                 winner_graphic(pixel_buffer)
 
                 # Venter på at spilleren skal trykke på joystick
