@@ -641,7 +641,8 @@ class ApiController:
         """
             use this method to send events to all players independently from the event handlers
         """
-        self.socketio.emit(event, data, broadcast=True)
+        if self.socketio:
+            self.socketio.emit(event, data, broadcast=True)
 
     def start(self):
         """
