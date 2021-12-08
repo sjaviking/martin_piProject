@@ -639,18 +639,37 @@ def debug_print(buffer):
 
 
 class ApiController:
+    """
+        Contains logic for website hosting and SocketIO event handlers
+        Should be initialized with the PlayerDatabase() used in the rest of the project
+        When players connect or perform actions, these will be pushed to the PlayerDatabase()
+        use the 
+    """
+
     def __init__(self, player_database):
         self.socketio = None
         self.player_database = player_database
         self.thread = None
 
     def emit(self, player, event, data=None):
+        """
+            use this method to send events to players independently from the event handlers
+        """
         if self.socketio and (player is not self.player_database.get_local_player()):
-            receiver = player.get_sid() if player else None
-            broadcast = (player == None)
-            self.socketio.emit(event, data, to=receiver, broadcast=broadcast)
+            self.socketio.emit(event, data, to=player.get_sid())
+
+    def broadcast(self, event, data):
+        """
+            use this method to send events to all players independently from the event handlers
+        """
+        self.socketio.emit(event, data, broadcast=True)
 
     def start(self):
+        """
+            This will start the SocketIO server and listen for events, and serve the website
+            Multiplayer is hosted on
+            https://pearpie.is-very-sweet.org/site/index.html
+        """
         if not self.thread:
             self.thread = threading.Thread(target=self.__host_api)
             self.thread.start()
@@ -756,7 +775,7 @@ class PixelBuffer:
         if buffer != self.prev_buffer:
             self.prev_buffer = buffer
             sense.set_pixels(buffer)
-            self.api_controller.emit(None, 'pixels', buffer)
+            self.api_controller.broadcast('pixels', buffer)
 
     def set_pixel(self, x, y, color):
         index = y * COLS + x
