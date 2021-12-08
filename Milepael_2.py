@@ -652,7 +652,7 @@ class ApiController:
 
     def start(self):
         if not self.thread:
-            self.thread = threading.Thread(target=self.host_api)
+            self.thread = threading.Thread(target=self.__host_api)
             self.thread.start()
 
     def __host_api(self):
@@ -660,7 +660,7 @@ class ApiController:
             Should not be called directly. Use ApiController().start() instead.
             Starts the flask file api and SocketIO api
             Multiplayer is hosted on
-            http://pearpie.is-very-sweet.org:5001/site/index.html
+            https://pearpie.is-very-sweet.org/site/index.html
         """
         from flask import Flask, request
         from flask_cors import CORS
